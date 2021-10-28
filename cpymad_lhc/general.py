@@ -284,11 +284,13 @@ def dynamic_aperture_tracking(madx: Madx, sigmas: Sequence[int], n_angles: int,
     madx.dynap(fastune=True, turns=turns)
     madx.endtrack()
 
-    df_dynap = tfs.TfsDataFrame(madx.table.dynap.dframe())
-    df_dynaptune = tfs.TfsDataFrame(madx.table.dynaptune.dframe())
+    # get tables and drop index
+    # (index contains only marker `#e`, maybe as no observation points were set)
+    df_dynap = tfs.TfsDataFrame(madx.table.dynap.dframe()).reset_index(drop=True)
+    df_dynaptune = tfs.TfsDataFrame(madx.table.dynaptune.dframe()).reset_index(drop=True)
     if outputdir:
-        tfs.write(outputdir / 'dynap.tfs', df_dynap.reset_index(drop=True))
-        tfs.write(outputdir / 'dynap_tune.tfs', df_dynaptune.reset_index(drop=True))
+        tfs.write(outputdir / 'dynap.tfs', df_dynap)
+        tfs.write(outputdir / 'dynap_tune.tfs', df_dynaptune)
     return df_dynap, df_dynaptune
 
 
