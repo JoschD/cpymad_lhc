@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cpymad_lhc.coupling_correction &mdash; cpymad-lhc 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cpymad-lhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cpymad_lhc.coupling_correction</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cpymad_lhc.coupling_correction</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Coupling Correction</span>
+<span class="sd">---------------------</span>
+
+<span class="sd">Creates a coupling knob from current optics.</span>
+<span class="sd">Perform coupling correction.</span>
+<span class="sd">The functionality is based on the FineTuneCoupling scripts.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span>
+<span class="kn">from</span> <span class="nn">cpymad_lhc.general</span> <span class="kn">import</span> <span class="n">get_coupling_knobs</span><span class="p">,</span> <span class="n">get_tune_and_chroma_knobs</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="correct_coupling"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_correction.correct_coupling">[docs]</a><span class="k">def</span> <span class="nf">correct_coupling</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">squeezed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Wrapper for coupling correction to use the default knob-names if not</span>
+<span class="sd">     otherwise given.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx: Madx instance</span>
+<span class="sd">        accel: Accelerator we are using &#39;LHC&#39; or &#39;HLLHC&#39;</span>
+<span class="sd">        sequence: Sequence to use</span>
+<span class="sd">        squeezed: Use squeezed knobs (`_sq`)</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        Other arguments of `correct_coupling_with_knobs`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">check_knobs</span><span class="p">(</span><span class="n">knobs</span><span class="p">):</span>
+        <span class="n">not_defined</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">knobs</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_defined</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knobs </span><span class="si">{</span><span class="n">not_defined</span><span class="si">}</span><span class="s2"> are not defined in sequence!&quot;</span><span class="p">)</span>
+
+    <span class="n">knobs_dict</span> <span class="o">=</span> <span class="n">_get_default_knob_names</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">knob_arg</span><span class="p">,</span> <span class="n">knob_names</span> <span class="ow">in</span> <span class="n">knobs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">knob_arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">squeezed</span><span class="p">:</span>
+                <span class="n">knob_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">_sq&quot;</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">knob_names</span><span class="p">)</span>
+            <span class="n">check_knobs</span><span class="p">(</span><span class="n">knob_names</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">knob_arg</span><span class="p">]</span> <span class="o">=</span> <span class="n">knob_names</span>
+
+    <span class="n">correct_coupling_with_knobs</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="correct_coupling_with_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_correction.correct_coupling_with_knobs">[docs]</a><span class="k">def</span> <span class="nf">correct_coupling_with_knobs</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">tune_knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                                <span class="n">chroma_knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                                <span class="n">coupling_knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                                <span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span>
+                                <span class="n">simplex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                <span class="n">pre_estimation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                <span class="n">match_tunes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Corrects coupling via the given knobs.</span>
+
+<span class="sd">    If there is no coupling, the tunes should be able to be matched</span>
+<span class="sd">    to the same factional tunes (mid-tunes). If there is a remaining tune split,</span>
+<span class="sd">    this is the closest tune approach (cta) and indicates the presence of</span>
+<span class="sd">    coupling.</span>
+
+<span class="sd">    The algorithm is as follows:</span>
+<span class="sd">    First the coupling knob settings are estimated by a one-step newton</span>
+<span class="sd">    optimization (if `pre_estimate` is set).</span>
+<span class="sd">    Then the tune-knobs and the coupling knobs are used</span>
+<span class="sd">    alternatingly to match the tunes together. This is iterated according to the</span>
+<span class="sd">    desired `iteration` parameter.</span>
+<span class="sd">    Before and after this correction the cta is checked.</span>
+
+<span class="sd">    Remark: The first `twiss` call in the first `_analytical_minimization` call</span>
+<span class="sd">    is unneccessary as the nothing has changed between this one and the one in</span>
+<span class="sd">    `_cta_check`. Could be somehow checked for speed optimization.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx: Madx instance</span>
+<span class="sd">        tune_knobs: names of elements/knobs to vary for tune matching</span>
+<span class="sd">        chroma_knobs: names of elements/knobs to vary for chroma matching:</span>
+<span class="sd">        coupling_knobs: names of elements/knobs to vary for coupling matching:</span>
+<span class="sd">        sequence: Sequence to use</span>
+<span class="sd">        qx: tune to match in x</span>
+<span class="sd">        qy: tune to match in y</span>
+<span class="sd">        dqx: chromaticity to match in x</span>
+<span class="sd">        dqy: chromaticity to match in y</span>
+<span class="sd">        tolerance: (final) tolerance for successfull matching</span>
+<span class="sd">        iterations: number of iterations in empirical matching</span>
+<span class="sd">        simplex: use simplex method in empirical matching</span>
+<span class="sd">        pre_estimation: use analytical method to estimate coupling-knob settings.</span>
+<span class="sd">                      This will only work if the given coupling knobs correspond</span>
+<span class="sd">                      to the imaginary and real part of F1001.</span>
+<span class="sd">        match_tunes: If true, also performs a tune and chroma match at the end,</span>
+<span class="sd">                     otherwise, the original tune-knob values are recovered.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span> <span class="o">=</span> <span class="n">_get_middle_tunes</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">)</span>
+    <span class="n">tune_knobs_saved</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tune_knobs</span><span class="p">}</span>
+
+    <span class="n">cta</span> <span class="o">=</span> <span class="n">_cta_check</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span> <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span><span class="p">,</span>
+                     <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">iterations</span><span class="p">,</span>
+                     <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Initial closest tune approach&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cta</span> <span class="o">&lt;=</span> <span class="n">tolerance</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Coupling already below tolerance. Skipping correction.&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">tune_knobs_saved</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">pre_estimation</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">coupling_knobs</span><span class="p">:</span>
+            <span class="n">_analytical_minimization</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">knob</span><span class="p">)</span>
+
+    <span class="n">_empirical_minimization</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span>
+                            <span class="n">tune_knobs</span><span class="p">,</span> <span class="n">coupling_knobs</span><span class="p">,</span>
+                            <span class="n">iterations</span><span class="p">,</span> <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">simplex</span><span class="p">)</span>
+
+    <span class="n">_cta_check</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span> <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span><span class="p">,</span>
+               <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span>
+               <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Final closest tune approach&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">match_tunes</span><span class="p">:</span>
+        <span class="n">_recover_tunes</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span> <span class="n">chroma_knobs</span><span class="p">,</span>
+                       <span class="n">qx</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span> <span class="n">dqx</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dqy</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">tune_knobs_saved</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span></div>
+
+
+<span class="c1"># Algorithm Steps --------------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">_get_middle_tunes</span><span class="p">(</span><span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; Get the tunes with the factional part in the middle</span>
+<span class="sd">    between the qx and qy fractional parts, but with the same integer part. &quot;&quot;&quot;</span>
+    <span class="n">qx_frac</span><span class="p">,</span> <span class="n">qy_frac</span> <span class="o">=</span> <span class="n">qx</span> <span class="o">%</span> <span class="mi">1</span><span class="p">,</span> <span class="n">qy</span> <span class="o">%</span> <span class="mi">1</span>
+    <span class="n">qmid_frac</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">qx_frac</span> <span class="o">+</span> <span class="n">qy_frac</span><span class="p">)</span>
+    <span class="n">qx_mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span> <span class="o">+</span> <span class="n">qmid_frac</span>
+    <span class="n">qy_mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">qy</span><span class="p">)</span> <span class="o">+</span> <span class="n">qmid_frac</span>
+    <span class="k">return</span> <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span>
+
+
+<span class="k">def</span> <span class="nf">_get_default_knob_names</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Get tune, chroma and coupling knobs. &quot;&quot;&quot;</span>
+    <span class="n">tune_chroma_knobs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+    <span class="n">coupling_knobs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">get_coupling_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">tune_knobs</span><span class="o">=</span><span class="n">tune_chroma_knobs</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span>
+                <span class="n">chroma_knobs</span><span class="o">=</span><span class="n">tune_chroma_knobs</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span>
+                <span class="n">coupling_knobs</span><span class="o">=</span><span class="n">coupling_knobs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_analytical_minimization</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knob</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Analytical Minimization. &quot;&quot;&quot;</span>
+    <span class="n">init_value</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span>
+    <span class="n">cta</span> <span class="o">=</span> <span class="n">_get_current_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_value</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">cta</span>
+    <span class="n">cta_plus</span> <span class="o">=</span> <span class="n">_get_current_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="o">=</span> <span class="n">init_value</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">cta</span>
+    <span class="n">cta_minus</span> <span class="o">=</span> <span class="n">_get_current_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">new_value</span> <span class="o">=</span> <span class="n">init_value</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">cta_minus</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">cta_plus</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">cta</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Knob </span><span class="si">{</span><span class="n">knob</span><span class="si">}</span><span class="s2"> updated: </span><span class="si">{</span><span class="n">init_value</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_value</span>
+
+
+<span class="k">def</span> <span class="nf">_empirical_minimization</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">tune_knobs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">coupling_knobs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                            <span class="n">iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qx_mid</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy_mid</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                            <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">simplex</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Push tunes together by alternative matching of tune and coupling knobs. &quot;&quot;&quot;</span>
+    <span class="n">calls_tune</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">simplex</span><span class="p">)</span>
+    <span class="n">calls_coupling</span> <span class="o">=</span> <span class="mi">150</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">simplex</span><span class="p">)</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="mf">1e-9</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
+        <span class="n">current_tol</span> <span class="o">=</span> <span class="n">tolerance</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">iterations</span><span class="o">-</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># ends at final tolerance</span>
+        <span class="n">match</span><span class="p">(</span>
+            <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
+            <span class="n">q1</span><span class="o">=</span><span class="n">qx_mid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy_mid</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="n">calls_tune</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="n">current_tol</span><span class="p">,</span>
+            <span class="c1"># simplex=simplex,  # simplex is only used with coupling knobs</span>
+        <span class="p">)</span>
+        <span class="n">match</span><span class="p">(</span>
+            <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">coupling_knobs</span><span class="p">,</span>
+            <span class="n">q1</span><span class="o">=</span><span class="n">qx_mid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy_mid</span><span class="p">,</span>
+            <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="n">calls_coupling</span><span class="p">,</span>
+            <span class="n">tolerance</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">current_tol</span><span class="p">,</span>
+            <span class="n">simplex</span><span class="o">=</span><span class="n">simplex</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_recover_tunes</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">chroma_knobs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                   <span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqy</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Recover Tunes (i.e. normal tune matching) &quot;&quot;&quot;</span>
+    <span class="c1"># match_tune(madx, accel, sequence, qx=qx, qy=qy, dqx=dqx, dqy=dqy)</span>
+    <span class="n">match</span><span class="p">(</span>
+        <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
+        <span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-21</span>
+    <span class="p">)</span>
+    <span class="n">match</span><span class="p">(</span>
+        <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">chroma_knobs</span><span class="p">,</span>
+        <span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-21</span>
+    <span class="p">)</span>
+    <span class="n">match</span><span class="p">(</span>
+        <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="o">+</span><span class="n">chroma_knobs</span><span class="p">,</span>
+        <span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-21</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># Closest Tune Approach --------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">_cta_check</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span> <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Try to match tunes and log closest tune approach. &quot;&quot;&quot;</span>
+    <span class="n">match</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
+          <span class="n">q1</span><span class="o">=</span><span class="n">qx_mid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy_mid</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">)</span>
+    <span class="n">cta</span> <span class="o">=</span> <span class="n">_get_current_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">cta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cta</span>
+
+
+<span class="k">def</span> <span class="nf">_get_current_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Get the current tune approach in the sequence. &quot;&quot;&quot;</span>
+    <span class="n">madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">)</span>
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">twiss</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">q1</span><span class="p">,</span> <span class="n">madx</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">twiss</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">q2</span>
+    <span class="n">cta</span> <span class="o">=</span> <span class="n">_get_tune_approach_value</span><span class="p">(</span><span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">)</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current tune approach value: </span><span class="si">{</span><span class="n">cta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cta</span>
+
+
+<span class="k">def</span> <span class="nf">_get_tune_approach_value</span><span class="p">(</span><span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Calculate the (fractional) tune approach of qx and qy. &quot;&quot;&quot;</span>
+    <span class="n">tune_split</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">qy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">qx</span> <span class="o">-</span> <span class="n">qy</span> <span class="o">-</span> <span class="n">tune_split</span><span class="p">)</span>
+
+
+<span class="c1"># General Matching function ----------------------------------------------------</span>
+
+<div class="viewcode-block" id="match"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_correction.match">[docs]</a><span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+          <span class="n">step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-21</span><span class="p">,</span> <span class="n">calls</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+          <span class="n">chrom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">simplex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Match the `knobs` to the settings in `kwargs`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx: Madx instance</span>
+<span class="sd">        sequence: Sequence to use</span>
+<span class="sd">        knobs: Sequence of variables to match</span>
+<span class="sd">        chrom: use the `chrom` flag in match</span>
+<span class="sd">        step: step size to vary knob</span>
+<span class="sd">        calls: number of varying calls</span>
+<span class="sd">        tolerance: (final) tolerance for successfull matching</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        Arguments for the MAD-X `global` command to be matched at,</span>
+<span class="sd">        e.g. `q1=`, `dqy=` etc.</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Matching knobs &#39;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">knobs</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; for sequence &#39;</span><span class="si">{</span><span class="n">sequence</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">chrom</span><span class="o">=</span><span class="n">chrom</span><span class="p">)</span>
+    <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">global_</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">knobs</span><span class="p">:</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">vary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">simplex</span><span class="p">:</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">simplex</span><span class="p">(</span><span class="n">calls</span><span class="o">=</span><span class="n">calls</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lmdif</span><span class="p">(</span><span class="n">calls</span><span class="o">=</span><span class="n">calls</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">)</span>
+
+    <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">endmatch</span><span class="p">()</span></div>
+
+
+<span class="c1"># Other Approaches</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

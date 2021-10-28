@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cpymad_lhc.coupling_knob &mdash; cpymad-lhc 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cpymad-lhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cpymad_lhc.coupling_knob</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cpymad_lhc.coupling_knob</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Coupling Knob</span>
+<span class="sd">------------------</span>
+
+<span class="sd">Creates a coupling knob from current optics.</span>
+<span class="sd">Not implemented yet. TODO!</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="c1"># from optics_functions.coupling import coupling_via_cmatrix</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">COL_REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Reference&quot;</span>
+
+<span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">knobs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">dependant_knobs</span><span class="p">:</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="c1"># get F1001, F1010 from cmatrix</span>
+    <span class="c1"># define varying parameters: knob = knob_init + vary</span>
+    <span class="c1">#</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">replace_k0</span><span class="p">(</span><span class="n">attribute</span><span class="p">):</span>
+    <span class="n">replacements_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;k0l&quot;</span><span class="p">:</span> <span class="s2">&quot;angle&quot;</span><span class="p">,</span> <span class="s2">&quot;k0sl&quot;</span><span class="p">:</span> <span class="s2">&quot;tilt&quot;</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">replacements_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">new_attribute</span> <span class="o">=</span> <span class="n">replacements_map</span><span class="p">[</span><span class="n">attribute</span><span class="p">]</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attribute </span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2"> is being replaced with </span><span class="si">{</span><span class="n">new_attribute</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">attribute</span> <span class="o">=</span> <span class="n">new_attribute</span>
+
+
+<div class="viewcode-block" id="get_attribute_response"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_response</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Creates the linear response matrix of the given `variables` for the desired `attributed`. &quot;&quot;&quot;</span>
+    <span class="c1"># find elements in sequence that have the attribute defined</span>
+    <span class="n">valid_elements</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">sequence</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span> <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">e</span><span class="p">}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_elements</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No elements found in sequence &#39;</span><span class="si">{</span><span class="n">sequence</span><span class="si">}</span><span class="s2">&#39; with attribute &#39;</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="n">get_valid_elements</span> <span class="o">=</span> <span class="n">itemgetter</span><span class="p">(</span><span class="o">*</span><span class="n">valid_elements</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">get_attribute_values</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">[</span><span class="n">attribute</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">get_valid_elements</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">sequence</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">)])</span>
+
+    <span class="c1"># create DataFrame</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">valid_elements</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">columns</span><span class="o">=</span><span class="n">variables</span><span class="p">)</span>
+
+    <span class="c1"># all-zero reference</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">get_attribute_values</span><span class="p">()</span>
+
+    <span class="c1"># responses</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_attribute_values</span><span class="p">()</span> <span class="o">-</span> <span class="n">reference</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># drop all-zero rows</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

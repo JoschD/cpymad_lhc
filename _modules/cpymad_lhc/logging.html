@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cpymad_lhc.logging &mdash; cpymad-lhc 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cpymad-lhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cpymad_lhc.logging</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cpymad_lhc.logging</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Logging</span>
+<span class="sd">------------</span>
+
+<span class="sd">Logging tools with cpymad perks.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Log Levels should be higher than info to be able to filter debug</span>
+<span class="c1"># messages in the output and not get line duplicates</span>
+<span class="n">LOG_OUT_LVL</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="n">LOG_CMD_LVL</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="n">MADXCMD</span> <span class="o">=</span> <span class="s1">&#39;madxcmd&#39;</span>
+<span class="n">MADXOUT</span> <span class="o">=</span> <span class="s1">&#39;madxout&#39;</span>
+
+<span class="c1"># ASCII Colors, change to your liking (the last three three-digits are RGB)</span>
+<span class="c1"># Default colors should be readable on dark and light backgrounds</span>
+<span class="n">COLORS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">reset</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\33</span><span class="s1">[0m&#39;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\33</span><span class="s1">[0m</span><span class="se">\33</span><span class="s1">[38;2;127;127;127m&#39;</span><span class="p">,</span>
+    <span class="n">msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">cmd_name</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\33</span><span class="s1">[0m</span><span class="se">\33</span><span class="s1">[38;2;132;168;91m&#39;</span><span class="p">,</span>
+    <span class="n">cmd_msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">out_name</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\33</span><span class="s1">[0m</span><span class="se">\33</span><span class="s1">[38;2;114;147;203m&#39;</span><span class="p">,</span>
+    <span class="n">out_msg</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\33</span><span class="s1">[0m</span><span class="se">\33</span><span class="s1">[38;2;127;127;127m&#39;</span><span class="p">,</span>
+    <span class="n">warn_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">warn_msg</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\33</span><span class="s1">[0m</span><span class="se">\33</span><span class="s1">[38;2;193;134;22m&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="StreamToLogger"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.logging.StreamToLogger">[docs]</a><span class="k">class</span> <span class="nc">StreamToLogger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; File-like stream object that redirects writes to a logger instance. &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="n">log_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linebuf</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
+        <span class="n">last_line_empty</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">buf</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>  <span class="c1"># convert madx output from binary</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">last_line_empty</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                <span class="n">last_line_empty</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">last_line_empty</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># skips multiple empty lines</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+            <span class="n">handler</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MaxFilter"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.logging.MaxFilter">[docs]</a><span class="k">class</span> <span class="nc">MaxFilter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; To get messages only up to a certain level &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MaxFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__level</span> <span class="o">=</span> <span class="n">level</span>
+
+<div class="viewcode-block" id="MaxFilter.filter"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.logging.MaxFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_record</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">log_record</span><span class="o">.</span><span class="n">levelno</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__level</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_lvl_fmt</span><span class="p">(</span><span class="n">name_color</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">msg_color</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Defines the level/message formatter with colors &quot;&quot;&quot;</span>
+    <span class="n">name_reset</span><span class="p">,</span> <span class="n">msg_reset</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">name_color</span><span class="p">:</span>
+        <span class="n">name_reset</span> <span class="o">=</span> <span class="n">COLORS</span><span class="p">[</span><span class="s1">&#39;reset&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">msg_color</span><span class="p">:</span>
+        <span class="n">msg_reset</span> <span class="o">=</span> <span class="n">COLORS</span><span class="p">[</span><span class="s1">&#39;reset&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name_color</span><span class="si">}</span><span class="s1">%(levelname)7s</span><span class="si">{</span><span class="n">name_reset</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="sa">f</span><span class="s1">&#39; | &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">msg_color</span><span class="si">}</span><span class="s1">%(message)s</span><span class="si">{</span><span class="n">msg_reset</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="cpymad_logging_setup"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.logging.cpymad_logging_setup">[docs]</a><span class="k">def</span> <span class="nf">cpymad_logging_setup</span><span class="p">(</span>
+        <span class="n">command_log</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;madx_commands.log&#39;</span><span class="p">),</span>
+        <span class="n">full_log</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;full_output.log&#39;</span><span class="p">),</span>
+        <span class="n">output_log</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">colors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+        <span class="n">clear_handlers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create all necessary logging.</span>
+<span class="sd">    Adds stream handlers to root logger including cpymad loggers for output and commands.</span>
+<span class="sd">    Takes also care of file handlers if specified.</span>
+
+<span class="sd">    Args</span>
+<span class="sd">        output_log: Path to write madx-output to (None to deactivate)</span>
+<span class="sd">        command_log: Path to write madx-commands to (None to deactivate)</span>
+<span class="sd">        full_log: Path to write full logging output to (None to deactivate)</span>
+<span class="sd">        colors: Bool whether ascii-colors should be used</span>
+<span class="sd">        level: Minimum stdout logging level. Madx commands and output are always logged</span>
+<span class="sd">        clear_loggers: Clears all handlers of the loggers first.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">        dict with StreamToLoggers &#39;stdout&#39; and &#39;command_log&#39;.</span>
+<span class="sd">        Can be used as `Madx(**cpymad_logging_setup())`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cdict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">colors</span><span class="p">:</span>
+        <span class="n">cdict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">COLORS</span><span class="p">)</span>
+
+    <span class="n">msg_fmt</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">LOG_OUT_LVL</span><span class="p">,</span> <span class="s1">&#39;madx&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">LOG_CMD_LVL</span><span class="p">,</span> <span class="s1">&#39;cmd&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Setup Root Logger</span>
+    <span class="n">root_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">clear_handlers</span><span class="p">:</span>
+        <span class="n">root_logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># remove handlers in case someone already created them</span>
+    <span class="n">root_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NOTSET</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">full_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Add full logging to file</span>
+        <span class="n">fullfile_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">full_log</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">fullfile_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_lvl_fmt</span><span class="p">())</span>
+        <span class="n">root_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fullfile_handler</span><span class="p">)</span>
+
+    <span class="c1"># Add full logging to stdout</span>
+    <span class="n">fullstream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">fullstream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+    <span class="n">fullstream_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">MaxFilter</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">LOG_CMD_LVL</span><span class="p">,</span> <span class="n">LOG_OUT_LVL</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">fullstream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_lvl_fmt</span><span class="p">(</span><span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]))</span>
+    <span class="n">root_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fullstream_handler</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">level</span> <span class="o">&lt;=</span> <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span>
+        <span class="n">warnstream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">warnstream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+        <span class="n">warnstream_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">MaxFilter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">))</span>
+        <span class="n">warnstream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_lvl_fmt</span><span class="p">(</span><span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;warn_name&#39;</span><span class="p">],</span> <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;warn_msg&#39;</span><span class="p">]))</span>
+        <span class="n">root_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">warnstream_handler</span><span class="p">)</span>
+
+    <span class="n">cmdstream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">cmdstream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">LOG_CMD_LVL</span><span class="p">)</span>
+    <span class="n">cmdstream_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">MaxFilter</span><span class="p">(</span><span class="n">LOG_CMD_LVL</span><span class="p">))</span>
+    <span class="n">cmdstream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_lvl_fmt</span><span class="p">(</span><span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;cmd_name&#39;</span><span class="p">],</span> <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;cmd_msg&#39;</span><span class="p">]))</span>
+    <span class="n">root_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">cmdstream_handler</span><span class="p">)</span>
+
+    <span class="n">outstream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">outstream_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">LOG_OUT_LVL</span><span class="p">)</span>
+    <span class="n">outstream_handler</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">MaxFilter</span><span class="p">(</span><span class="n">LOG_OUT_LVL</span><span class="p">))</span>
+    <span class="n">outstream_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">_lvl_fmt</span><span class="p">(</span><span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;out_name&#39;</span><span class="p">],</span> <span class="n">cdict</span><span class="p">[</span><span class="s1">&#39;out_msg&#39;</span><span class="p">]))</span>
+    <span class="n">root_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">outstream_handler</span><span class="p">)</span>
+
+    <span class="c1"># create file-like loggers for madx-instance</span>
+    <span class="c1"># create logger for madx output</span>
+    <span class="n">madx_out_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">MADXOUT</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">clear_handlers</span><span class="p">:</span>
+        <span class="n">madx_out_logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">output_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># log everything also to file</span>
+        <span class="n">madx_out_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">output_log</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">madx_out_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">msg_fmt</span><span class="p">)</span>
+        <span class="n">madx_out_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">madx_out_handler</span><span class="p">)</span>
+    <span class="n">out_stream</span> <span class="o">=</span> <span class="n">StreamToLogger</span><span class="p">(</span><span class="n">madx_out_logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">LOG_OUT_LVL</span><span class="p">)</span>
+
+    <span class="c1"># create logger for madx commands</span>
+    <span class="n">madx_cmd_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">MADXCMD</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">clear_handlers</span><span class="p">:</span>
+        <span class="n">madx_cmd_logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">command_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># log everything also to file</span>
+        <span class="n">madx_cmd_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">command_log</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">madx_cmd_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">msg_fmt</span><span class="p">)</span>
+        <span class="n">madx_cmd_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">madx_cmd_handler</span><span class="p">)</span>
+    <span class="n">cmd_stream</span> <span class="o">=</span> <span class="n">StreamToLogger</span><span class="p">(</span><span class="n">madx_cmd_logger</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">LOG_CMD_LVL</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stdout</span><span class="o">=</span><span class="n">out_stream</span><span class="p">,</span> <span class="n">command_log</span><span class="o">=</span><span class="n">cmd_stream</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

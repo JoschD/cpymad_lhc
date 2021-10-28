@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cpymad_lhc.ir_orbit &mdash; cpymad-lhc 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cpymad-lhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cpymad_lhc.ir_orbit</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cpymad_lhc.ir_orbit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">IR Orbit</span>
+<span class="sd">----------</span>
+
+<span class="sd">Functions to setup and check the orbit in the IRs.</span>
+
+<span class="sd">The values in the `on_` knobs (see `CROSSING_SCHEMES` and `get_orbit_variables()`)</span>
+<span class="sd">refer to the settings in mm and urad in Beam 1 (i.e. not only the Beam 1</span>
+<span class="sd">reference frame but Beam 1 itself). Beam 2 or Beam 4 are then configured</span>
+<span class="sd">accordingly. To check the twiss if everything is set correctly, the following</span>
+<span class="sd">symmetry/sign relations should hold true:</span>
+
+<span class="sd">Beam 1 and Beam 2 share coordinate system.</span>
+<span class="sd">Crossing angles - opposite sign</span>
+<span class="sd">Crossing offsets (same plane) - same sign</span>
+<span class="sd">Separation - opposite sign</span>
+
+<span class="sd">Beam 1 and Beam 4 have x-axis inverted.</span>
+<span class="sd">Y Crossing Angles - same sign</span>
+<span class="sd">Y Crossing offsets - same sign (i.e. same side)</span>
+<span class="sd">X Separation - same sign (i.e. opposite sides)</span>
+
+<span class="sd">X Crossing Angles - opposite sign</span>
+<span class="sd">X Crossing offsets - opposite sign (i.e. same sides)</span>
+<span class="sd">Y Separation - opposite sign (i.e. opposite sides)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">tfs</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">cpymad_lhc.general</span> <span class="kn">import</span> <span class="n">get_tfs</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">CROSSING_SCHEMES</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># from tracking masks</span>
+    <span class="s1">&#39;flat&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;lhc_inj&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;on_x1&#39;</span><span class="p">:</span>  <span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep1&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;on_x2&#39;</span><span class="p">:</span>  <span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep2&#39;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span>
+        <span class="s1">&#39;on_x5&#39;</span><span class="p">:</span>  <span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep5&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;on_x8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir1&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;phi_ir5&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir2&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;phi_ir8&#39;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;lhc_top&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;on_x1&#39;</span><span class="p">:</span>  <span class="mi">160</span><span class="p">,</span> <span class="s1">&#39;on_sep1&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.55</span><span class="p">,</span>
+        <span class="s1">&#39;on_x2&#39;</span><span class="p">:</span>  <span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;on_sep2&#39;</span><span class="p">:</span> <span class="mf">1.4</span><span class="p">,</span>
+        <span class="s1">&#39;on_x5&#39;</span><span class="p">:</span>  <span class="mi">160</span><span class="p">,</span> <span class="s1">&#39;on_sep5&#39;</span><span class="p">:</span> <span class="mf">0.55</span><span class="p">,</span>
+        <span class="s1">&#39;on_x8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;on_sep8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir1&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;phi_ir5&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir2&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;phi_ir8&#39;</span><span class="p">:</span> <span class="mi">180</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;hllhc_inj&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;on_x1&#39;</span><span class="p">:</span>  <span class="mi">295</span><span class="p">,</span> <span class="s1">&#39;on_sep1&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;on_x2&#39;</span><span class="p">:</span>  <span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep2&#39;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;on_a2&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">40</span><span class="p">,</span>
+        <span class="s1">&#39;on_x5&#39;</span><span class="p">:</span>  <span class="mi">295</span><span class="p">,</span> <span class="s1">&#39;on_sep5&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;on_x8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="s1">&#39;on_a8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">40</span><span class="p">,</span>
+        <span class="s1">&#39;on_crab1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;on_crab5&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;phi_ir5&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir2&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;phi_ir8&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;hllhc_top&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;on_x1&#39;</span><span class="p">:</span>  <span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;on_sep1&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.75</span><span class="p">,</span>
+        <span class="s1">&#39;on_x2&#39;</span><span class="p">:</span>  <span class="mi">170</span><span class="p">,</span> <span class="s1">&#39;on_sep2&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;on_x5&#39;</span><span class="p">:</span>  <span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;on_sep5&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
+        <span class="s1">&#39;on_x8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;on_sep8&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;on_crab1&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">190</span><span class="p">,</span> <span class="s1">&#39;on_crab5&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">190</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;phi_ir5&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span>
+        <span class="s1">&#39;phi_ir2&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;phi_ir8&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="get_orbit_variables"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables">[docs]</a><span class="k">def</span> <span class="nf">get_orbit_variables</span><span class="p">(</span><span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the variable names used for orbit setup.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        machine (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple of 0: list of all orbit variables, apart form those in 1</span>
+<span class="sd">                 1: dictionary of additional variables, that in the</span>
+<span class="sd">                    default configurations have the same value as another variable</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">machine</span> <span class="o">==</span> <span class="s2">&quot;hllhc&quot;</span><span class="p">:</span>
+        <span class="n">on_variables</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;crab1&#39;</span><span class="p">,</span> <span class="s1">&#39;crab5&#39;</span><span class="p">,</span>  <span class="c1"># exists only in HL-LHC</span>
+            <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;sep1&#39;</span><span class="p">,</span> <span class="s1">&#39;o1&#39;</span><span class="p">,</span> <span class="s1">&#39;a1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;sep2&#39;</span><span class="p">,</span> <span class="s1">&#39;o2&#39;</span><span class="p">,</span> <span class="s1">&#39;a2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x5&#39;</span><span class="p">,</span> <span class="s1">&#39;sep5&#39;</span><span class="p">,</span> <span class="s1">&#39;o5&#39;</span><span class="p">,</span> <span class="s1">&#39;a5&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x8&#39;</span><span class="p">,</span> <span class="s1">&#39;sep8&#39;</span><span class="p">,</span> <span class="s1">&#39;o8&#39;</span><span class="p">,</span> <span class="s1">&#39;a8&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;alice&#39;</span><span class="p">,</span> <span class="s1">&#39;sol_alice&#39;</span><span class="p">,</span> <span class="s1">&#39;lhcb&#39;</span><span class="p">,</span> <span class="s1">&#39;sol_atlas&#39;</span><span class="p">,</span> <span class="s1">&#39;sol_cms&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">special</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">on_variables</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;sep1&#39;</span><span class="p">,</span> <span class="s1">&#39;o1&#39;</span><span class="p">,</span> <span class="s1">&#39;oh1&#39;</span><span class="p">,</span> <span class="s1">&#39;ov1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;sep2&#39;</span><span class="p">,</span> <span class="s1">&#39;o2&#39;</span><span class="p">,</span> <span class="s1">&#39;oe2&#39;</span><span class="p">,</span> <span class="s1">&#39;a2&#39;</span><span class="p">,</span> <span class="s1">&#39;oh2&#39;</span><span class="p">,</span> <span class="s1">&#39;ov2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x5&#39;</span><span class="p">,</span> <span class="s1">&#39;sep5&#39;</span><span class="p">,</span> <span class="s1">&#39;o5&#39;</span><span class="p">,</span> <span class="s1">&#39;oh5&#39;</span><span class="p">,</span> <span class="s1">&#39;ov5&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;x8&#39;</span><span class="p">,</span> <span class="s1">&#39;sep8&#39;</span><span class="p">,</span> <span class="s1">&#39;o8&#39;</span><span class="p">,</span> <span class="s1">&#39;a8&#39;</span><span class="p">,</span> <span class="s1">&#39;sep8h&#39;</span><span class="p">,</span> <span class="s1">&#39;x8v&#39;</span><span class="p">,</span> <span class="s1">&#39;oh8&#39;</span><span class="p">,</span> <span class="s1">&#39;ov8&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;alice&#39;</span><span class="p">,</span> <span class="s1">&#39;sol_alice&#39;</span><span class="p">,</span> <span class="s1">&#39;lhcb&#39;</span><span class="p">,</span> <span class="s1">&#39;sol_atlas&#39;</span><span class="p">,</span> <span class="s1">&#39;sol_cms&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">special</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;on_ssep1&#39;</span><span class="p">:</span> <span class="s1">&#39;on_sep1&#39;</span><span class="p">,</span> <span class="s1">&#39;on_xx1&#39;</span><span class="p">:</span> <span class="s1">&#39;on_x1&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;on_ssep5&#39;</span><span class="p">:</span> <span class="s1">&#39;on_sep5&#39;</span><span class="p">,</span> <span class="s1">&#39;on_xx5&#39;</span><span class="p">:</span> <span class="s1">&#39;on_x5&#39;</span><span class="p">,</span>
+                   <span class="p">}</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;on_</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">on_variables</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;phi_ir</span><span class="si">{</span><span class="n">ir</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">ir</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">variables</span><span class="p">,</span> <span class="n">special</span></div>
+
+
+<div class="viewcode-block" id="orbit_setup"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup">[docs]</a><span class="k">def</span> <span class="nf">orbit_setup</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Automated orbit setup for some default schemes.</span>
+<span class="sd">    Please check if these are still valid.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx: Madx instance</span>
+<span class="sd">        machine (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        scheme: default orbit scheme to apply.</span>
+<span class="sd">                Choices: &#39;flat&#39;, &#39;inj&#39;, &#39;top&#39;, None</span>
+<span class="sd">                Default: &#39;flat&#39; (all values 0)</span>
+<span class="sd">        other: All standard crossing scheme variables. Values given here override</span>
+<span class="sd">               the values in the scheme, which in turn override the ones already set.</span>
+<span class="sd">               If the value of a variable is `None`, the variable is not used</span>
+<span class="sd">               (i.e. the value in the `madx.globals` is kept).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary with current settings of the scheme.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">variables</span><span class="p">,</span> <span class="n">special</span> <span class="o">=</span> <span class="n">get_orbit_variables</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
+    <span class="n">scheme_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scheme&#39;</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span>
+    <span class="n">mvars</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span>
+    <span class="n">full_scheme</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">scheme</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">default</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mvars</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">full_scheme</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">full_scheme</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">mvars</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">scheme_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">scheme_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">,</span> <span class="n">scheme_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scheme</span> <span class="o">=</span> <span class="n">CROSSING_SCHEMES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scheme &#39;</span><span class="si">{</span><span class="n">scheme_key</span><span class="si">}</span><span class="s2">&#39; not recognized.&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">set_value</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">scheme</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">default</span><span class="p">)))</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">reference</span> <span class="ow">in</span> <span class="n">special</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">set_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">reference</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">full_scheme</span></div>
+
+
+<div class="viewcode-block" id="get_current_orbit_scheme"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme">[docs]</a><span class="k">def</span> <span class="nf">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the current values for the orbit variales.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx: Madx instance</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary of all orbit variables and their value/definition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">variables</span><span class="p">,</span> <span class="n">special</span> <span class="o">=</span> <span class="n">get_orbit_variables</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">defs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">special</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="check_crabbing"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.check_crabbing">[docs]</a><span class="k">def</span> <span class="nf">check_crabbing</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">auto_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Check that the crabbing is not larger than the crossing angle.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx: Madx instance</span>
+<span class="sd">        auto_set: instead of throwing an error, set the crabbing to the xing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="n">on_crab</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;on_crab</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">on_xing</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;on_x</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">crab</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">on_crab</span><span class="p">]</span>
+        <span class="n">xing</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">on_xing</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">crab</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">xing</span><span class="p">):</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">on_crab</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">crab</span><span class="si">}</span><span class="s2"> is larger than </span><span class="si">{</span><span class="n">on_xing</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">xing</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="k">if</span> <span class="n">auto_set</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Limiting </span><span class="si">{</span><span class="n">on_crab</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+                <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">on_crab</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">crab</span><span class="p">)</span> <span class="o">*</span> <span class="n">xing</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<span class="c1"># Orbit Checks -----------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="log_orbit"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit">[docs]</a><span class="k">def</span> <span class="nf">log_orbit</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the orbit from madx-instance and twiss-dataframe and</span>
+<span class="sd">    log the configuration per IP. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">twiss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">twiss</span> <span class="o">=</span> <span class="n">get_tfs</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">twiss</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;PX&#39;</span><span class="p">,</span> <span class="s1">&#39;PY&#39;</span><span class="p">])</span>
+
+    <span class="n">variables</span> <span class="o">=</span> <span class="n">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span>  <span class="c1"># takes a few seconds, so do here</span>
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+        <span class="n">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">log_orbit_from_twiss</span><span class="p">(</span><span class="n">twiss</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="log_orbit_from_madx"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx">[docs]</a><span class="k">def</span> <span class="nf">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                        <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">variables</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Log current orbit scheme sorted by IP. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="log_orbit_from_twiss"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_twiss">[docs]</a><span class="k">def</span> <span class="nf">log_orbit_from_twiss</span><span class="p">(</span><span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Log orbit from twiss-dataframe. &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+        <span class="n">ip_marker</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;IP</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">next_element</span> <span class="o">=</span> <span class="n">_get_next_element</span><span class="p">(</span><span class="n">twiss</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">next_element</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ip_marker</span><span class="p">,</span> <span class="n">plane</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">offset_txt</span> <span class="o">=</span> <span class="s1">&#39;-unknown-&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">offset_txt</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">offset</span><span class="o">*</span><span class="mf">1e3</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> mm&#39;</span>
+
+            <span class="n">xing</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">next_element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">_get_angle</span><span class="p">(</span><span class="n">twiss</span><span class="p">,</span> <span class="n">ip_marker</span><span class="p">,</span> <span class="n">next_element</span><span class="p">,</span> <span class="n">plane</span><span class="p">)</span>
+                <span class="n">xing</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">angle</span><span class="o">*</span><span class="mf">1e6</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> urad (calc) &#39;</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">angle_p</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ip_marker</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;P</span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">xing</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">angle_p</span><span class="o">*</span><span class="mf">1e6</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> urad (p</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">) &#39;</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">xing</span><span class="p">):</span>
+                <span class="n">xing</span> <span class="o">=</span> <span class="s1">&#39;-unknown-&#39;</span>
+
+            <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IP</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">: xing </span><span class="si">{</span><span class="n">xing</span><span class="si">}</span><span class="s2">, offset </span><span class="si">{</span><span class="n">offset_txt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_angle</span><span class="p">(</span><span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">ip_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the beam angle at the IP calculated from the orbit at `element`.&quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;LENGTH&quot;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No length found in twiss. This might cause problems, if&quot;</span>
+                    <span class="s2">&quot;your IP is near the wrap-around point of the ring&quot;</span>
+                    <span class="s2">&quot;as there is no way of knowing how to wrap around.&quot;</span><span class="p">)</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">element</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">twiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ip_name</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">length</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">+=</span> <span class="n">length</span> <span class="k">if</span> <span class="n">ds</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">length</span>
+    <span class="n">dz</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">element</span><span class="p">,</span> <span class="n">plane</span><span class="p">]</span> <span class="o">-</span> <span class="n">twiss</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ip_name</span><span class="p">,</span> <span class="n">plane</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">dz</span> <span class="o">/</span> <span class="n">ds</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot; Returns `ip` as iterable, or tuple of all ips if `ip` is `None`. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ip</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ip</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">ip</span>
+
+
+<span class="k">def</span> <span class="nf">_get_next_element</span><span class="p">(</span><span class="n">twiss</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the next element after the IP. &quot;&quot;&quot;</span>
+    <span class="n">idx_ip</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IP</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">twiss</span><span class="o">.</span><span class="n">index</span><span class="p">[(</span><span class="n">idx_ip</span> <span class="o">+</span> <span class="n">idx</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">twiss</span><span class="o">.</span><span class="n">index</span><span class="p">)]</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">fr</span><span class="s1">&#39;(MQ|BPM).*(?P&lt;pos&gt;\d)[LR]</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">(\.B\d)?$&#39;</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking element: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;pos&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Next Element to IP</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s2"> found: </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">element</span>
+            <span class="k">break</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No suitable element for angle-calculation found in IP</span><span class="si">{</span><span class="n">ip</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
