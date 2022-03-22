@@ -139,13 +139,25 @@ class LimitChecks:
 
 
 def check_corrector_limits(madx: Madx, accel: str,  beam: int, limit_to_max: bool = False):
-    if accel not in LIMITS.keys():
-        raise NotImplementedError(f'Accelerator {accel} not implemented.')
+    """ Wrapper to run the limit checks.
+
+    Args:
+        madx (Madx): MAD-X instance
+        accel (str): Accelerator to check.
+        beam (int): Beam to check
+        limit_to_max (bool): If ``True`` set the value to the max if above limit.
+                             If ``False`` will raise ``ValueError`` after finding
+                             too high values. Default: ``False``.
+    """
+    try:
+        values_dict = LIMITS[accel.upper()]
+    except KeyError as e:
+        raise NotImplementedError(f'Accelerator {accel} not implemented.') from e
 
     LOG.info(f"Checking corrector limits for {accel} beam {beam}.")
     checks = LimitChecks(madx=madx, beam=beam,
                          limit_to_max=limit_to_max,
-                         values_dict=LIMITS[accel])
+                         values_dict=values_dict)
     checks.run_checks()
     if not checks.success:
         raise ValueError("One or more strengths are out of its limits, see log.")

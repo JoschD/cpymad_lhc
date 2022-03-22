@@ -77,10 +77,10 @@ CROSSING_SCHEMES = {  # from tracking masks
 }
 
 
-def get_orbit_variables(machine: str):
+def get_orbit_variables(accel: str):
     """ Get the variable names used for orbit setup.
     Args:
-        machine (str): 'lhc' or 'hllhc'
+        accel (str): 'lhc' or 'hllhc'
 
     Returns:
         tuple of 0: list of all orbit variables, apart form those in 1
@@ -88,7 +88,7 @@ def get_orbit_variables(machine: str):
                     default configurations have the same value as another variable
 
     """
-    if machine == "hllhc":
+    if accel == "hllhc":
         on_variables = (
             'crab1', 'crab5',  # exists only in HL-LHC
             'x1', 'sep1', 'o1', 'a1',
@@ -113,13 +113,13 @@ def get_orbit_variables(machine: str):
     return variables, special
 
 
-def orbit_setup(madx: Madx, machine: str, **kwargs):
+def orbit_setup(madx: Madx, accel: str, **kwargs):
     """ Automated orbit setup for some default schemes.
     Please check if these are still valid.
 
     Args:
         madx: Madx instance
-        machine (str): 'lhc' or 'hllhc'
+        accel (str): 'lhc' or 'hllhc'
 
     Keyword Args:
         scheme: default orbit scheme to apply.
@@ -134,7 +134,7 @@ def orbit_setup(madx: Madx, machine: str, **kwargs):
         dictionary with current settings of the scheme.
     """
     kwargs = {k.lower(): v for k, v in kwargs.items()}
-    variables, special = get_orbit_variables(machine)
+    variables, special = get_orbit_variables(accel)
     scheme_key = kwargs.get('scheme', 'flat')
     mvars = madx.globals
     full_scheme = {}
@@ -149,7 +149,7 @@ def orbit_setup(madx: Madx, machine: str, **kwargs):
 
     if scheme_key is not None:
         default = 0
-        for key in (f'{machine.lower()}_{scheme_key.lower()}' , scheme_key.lower()):
+        for key in (f'{accel.lower()}_{scheme_key.lower()}' , scheme_key.lower()):
             try:
                 scheme = CROSSING_SCHEMES[key]
             except KeyError:
@@ -168,7 +168,7 @@ def orbit_setup(madx: Madx, machine: str, **kwargs):
     return full_scheme
 
 
-def get_current_orbit_scheme(madx: Madx, machine: str):
+def get_current_orbit_scheme(madx: Madx, accel: str):
     """ Get the current values for the orbit variales.
 
     Args:
@@ -178,7 +178,7 @@ def get_current_orbit_scheme(madx: Madx, machine: str):
         Dictionary of all orbit variables and their value/definition.
 
     """
-    variables, special = get_orbit_variables(machine)
+    variables, special = get_orbit_variables(accel)
     return {var: madx.globals.defs[var] for var in variables + list(special.keys()) if var in madx.globals}
 
 
@@ -207,24 +207,24 @@ def check_crabbing(madx: Madx, auto_set: bool = False):
 # Orbit Checks -----------------------------------------------------------------
 
 
-def log_orbit(madx: Madx, machine: str, twiss: TfsDataFrame = None, ip: Union[Iterable[int], int] = None):
+def log_orbit(madx: Madx, accel: str, twiss: TfsDataFrame = None, ip: Union[Iterable[int], int] = None):
     """ Get the orbit from madx-instance and twiss-dataframe and
     log the configuration per IP. """
     if twiss is None:
         twiss = get_tfs(madx.table.twiss, columns=['NAME', 'S', 'X', 'Y', 'PX', 'PY'])
 
-    variables = get_current_orbit_scheme(madx, machine)  # takes a few seconds, so do here
+    variables = get_current_orbit_scheme(madx, accel)  # takes a few seconds, so do here
     for ip in _get_ip_iterable(ip):
-        log_orbit_from_madx(madx, machine, ip, variables)
+        log_orbit_from_madx(madx, accel, ip, variables)
         log_orbit_from_twiss(twiss, ip)
 
 
-def log_orbit_from_madx(madx: Madx, machine: str,
+def log_orbit_from_madx(madx: Madx, accel: str,
                         ip: Union[Iterable[int], int] = None,
                         variables: Iterable[str] = None):
     """ Log current orbit scheme sorted by IP. """
     if variables is None:
-        variables = get_current_orbit_scheme(madx, machine)
+        variables = get_current_orbit_scheme(madx, accel)
 
     for ip in _get_ip_iterable(ip):
         for k, v in variables.items():
