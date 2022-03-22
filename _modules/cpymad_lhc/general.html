@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.general &mdash; cpymad-lhc 0.0.1 documentation</title>
+  <title>cpymad_lhc.general &mdash; cpymad-lhc 0.0.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -374,7 +374,7 @@
 <span class="c1"># Errors -----------------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="switch_magentic_errors"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.switch_magentic_errors">[docs]</a><span class="k">def</span> <span class="nf">switch_magentic_errors</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="switch_magnetic_errors"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.switch_magnetic_errors">[docs]</a><span class="k">def</span> <span class="nf">switch_magnetic_errors</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Which magnetic field orders to apply.</span>
 
 <span class="sd">    Args:</span>
@@ -489,11 +489,11 @@
 
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tune (and chroma) matching for sequence </span><span class="si">{</span><span class="n">sequence</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="n">var_names</span> <span class="o">=</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="n">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">)</span>
+    <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">dqx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dqy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span>
+        <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span>
         <span class="n">calls</span> <span class="o">*=</span> <span class="mi">5</span>
-        <span class="n">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">,</span> <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span></div>
+        <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">,</span> <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="closest_tune_approach"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.closest_tune_approach">[docs]</a><span class="k">def</span> <span class="nf">closest_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>

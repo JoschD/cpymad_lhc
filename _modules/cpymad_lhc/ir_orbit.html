@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.ir_orbit &mdash; cpymad-lhc 0.0.1 documentation</title>
+  <title>cpymad_lhc.ir_orbit &mdash; cpymad-lhc 0.0.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -154,10 +154,10 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="get_orbit_variables"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables">[docs]</a><span class="k">def</span> <span class="nf">get_orbit_variables</span><span class="p">(</span><span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="get_orbit_variables"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables">[docs]</a><span class="k">def</span> <span class="nf">get_orbit_variables</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Get the variable names used for orbit setup.</span>
 <span class="sd">    Args:</span>
-<span class="sd">        machine (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
+<span class="sd">        accel (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple of 0: list of all orbit variables, apart form those in 1</span>
@@ -165,7 +165,7 @@
 <span class="sd">                    default configurations have the same value as another variable</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">machine</span> <span class="o">==</span> <span class="s2">&quot;hllhc&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">accel</span> <span class="o">==</span> <span class="s2">&quot;hllhc&quot;</span><span class="p">:</span>
         <span class="n">on_variables</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s1">&#39;crab1&#39;</span><span class="p">,</span> <span class="s1">&#39;crab5&#39;</span><span class="p">,</span>  <span class="c1"># exists only in HL-LHC</span>
             <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;sep1&#39;</span><span class="p">,</span> <span class="s1">&#39;o1&#39;</span><span class="p">,</span> <span class="s1">&#39;a1&#39;</span><span class="p">,</span>
@@ -190,13 +190,13 @@
     <span class="k">return</span> <span class="n">variables</span><span class="p">,</span> <span class="n">special</span></div>
 
 
-<div class="viewcode-block" id="orbit_setup"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup">[docs]</a><span class="k">def</span> <span class="nf">orbit_setup</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="orbit_setup"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup">[docs]</a><span class="k">def</span> <span class="nf">orbit_setup</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Automated orbit setup for some default schemes.</span>
 <span class="sd">    Please check if these are still valid.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
-<span class="sd">        machine (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
+<span class="sd">        accel (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
 
 <span class="sd">    Keyword Args:</span>
 <span class="sd">        scheme: default orbit scheme to apply.</span>
@@ -211,7 +211,7 @@
 <span class="sd">        dictionary with current settings of the scheme.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-    <span class="n">variables</span><span class="p">,</span> <span class="n">special</span> <span class="o">=</span> <span class="n">get_orbit_variables</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
+    <span class="n">variables</span><span class="p">,</span> <span class="n">special</span> <span class="o">=</span> <span class="n">get_orbit_variables</span><span class="p">(</span><span class="n">accel</span><span class="p">)</span>
     <span class="n">scheme_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scheme&#39;</span><span class="p">,</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span>
     <span class="n">mvars</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span>
     <span class="n">full_scheme</span> <span class="o">=</span> <span class="p">{}</span>
@@ -226,7 +226,7 @@
 
     <span class="k">if</span> <span class="n">scheme_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">default</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">machine</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">scheme_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">,</span> <span class="n">scheme_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">accel</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">scheme_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">,</span> <span class="n">scheme_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">scheme</span> <span class="o">=</span> <span class="n">CROSSING_SCHEMES</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -245,7 +245,7 @@
     <span class="k">return</span> <span class="n">full_scheme</span></div>
 
 
-<div class="viewcode-block" id="get_current_orbit_scheme"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme">[docs]</a><span class="k">def</span> <span class="nf">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="get_current_orbit_scheme"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme">[docs]</a><span class="k">def</span> <span class="nf">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Get the current values for the orbit variales.</span>
 
 <span class="sd">    Args:</span>
@@ -255,7 +255,7 @@
 <span class="sd">        Dictionary of all orbit variables and their value/definition.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">variables</span><span class="p">,</span> <span class="n">special</span> <span class="o">=</span> <span class="n">get_orbit_variables</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
+    <span class="n">variables</span><span class="p">,</span> <span class="n">special</span> <span class="o">=</span> <span class="n">get_orbit_variables</span><span class="p">(</span><span class="n">accel</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">defs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">special</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">}</span></div>
 
 
@@ -284,24 +284,24 @@
 <span class="c1"># Orbit Checks -----------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="log_orbit"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit">[docs]</a><span class="k">def</span> <span class="nf">log_orbit</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="log_orbit"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit">[docs]</a><span class="k">def</span> <span class="nf">log_orbit</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Get the orbit from madx-instance and twiss-dataframe and</span>
 <span class="sd">    log the configuration per IP. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">twiss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">twiss</span> <span class="o">=</span> <span class="n">get_tfs</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">twiss</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;NAME&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;PX&#39;</span><span class="p">,</span> <span class="s1">&#39;PY&#39;</span><span class="p">])</span>
 
-    <span class="n">variables</span> <span class="o">=</span> <span class="n">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span>  <span class="c1"># takes a few seconds, so do here</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="n">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">)</span>  <span class="c1"># takes a few seconds, so do here</span>
     <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
-        <span class="n">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+        <span class="n">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
         <span class="n">log_orbit_from_twiss</span><span class="p">(</span><span class="n">twiss</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="log_orbit_from_madx"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx">[docs]</a><span class="k">def</span> <span class="nf">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<div class="viewcode-block" id="log_orbit_from_madx"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx">[docs]</a><span class="k">def</span> <span class="nf">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                         <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">variables</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Log current orbit scheme sorted by IP. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="n">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

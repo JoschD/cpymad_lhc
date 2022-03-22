@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.coupling_correction &mdash; cpymad-lhc 0.0.1 documentation</title>
+  <title>cpymad_lhc.coupling_correction &mdash; cpymad-lhc 0.0.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -252,14 +252,14 @@
     <span class="n">step</span> <span class="o">=</span> <span class="mf">1e-9</span>
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
         <span class="n">current_tol</span> <span class="o">=</span> <span class="n">tolerance</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">iterations</span><span class="o">-</span><span class="n">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># ends at final tolerance</span>
-        <span class="n">match</span><span class="p">(</span>
+        <span class="k">match</span><span class="p">(</span>
             <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
             <span class="n">q1</span><span class="o">=</span><span class="n">qx_mid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy_mid</span><span class="p">,</span>
             <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="n">calls_tune</span><span class="p">,</span>
             <span class="n">tolerance</span><span class="o">=</span><span class="n">current_tol</span><span class="p">,</span>
             <span class="c1"># simplex=simplex,  # simplex is only used with coupling knobs</span>
         <span class="p">)</span>
-        <span class="n">match</span><span class="p">(</span>
+        <span class="k">match</span><span class="p">(</span>
             <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">coupling_knobs</span><span class="p">,</span>
             <span class="n">q1</span><span class="o">=</span><span class="n">qx_mid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy_mid</span><span class="p">,</span>
             <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="n">calls_coupling</span><span class="p">,</span>
@@ -272,19 +272,19 @@
                    <span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqy</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Recover Tunes (i.e. normal tune matching) &quot;&quot;&quot;</span>
     <span class="c1"># match_tune(madx, accel, sequence, qx=qx, qy=qy, dqx=dqx, dqy=dqy)</span>
-    <span class="n">match</span><span class="p">(</span>
+    <span class="k">match</span><span class="p">(</span>
         <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
         <span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span>
         <span class="n">step</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-21</span>
     <span class="p">)</span>
-    <span class="n">match</span><span class="p">(</span>
+    <span class="k">match</span><span class="p">(</span>
         <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">chroma_knobs</span><span class="p">,</span>
         <span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">,</span>
         <span class="n">step</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-21</span>
     <span class="p">)</span>
-    <span class="n">match</span><span class="p">(</span>
+    <span class="k">match</span><span class="p">(</span>
         <span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="o">+</span><span class="n">chroma_knobs</span><span class="p">,</span>
         <span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">,</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">,</span>
@@ -296,7 +296,7 @@
 
 <span class="k">def</span> <span class="nf">_cta_check</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span> <span class="n">qx_mid</span><span class="p">,</span> <span class="n">qy_mid</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Try to match tunes and log closest tune approach. &quot;&quot;&quot;</span>
-    <span class="n">match</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
+    <span class="k">match</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">tune_knobs</span><span class="p">,</span>
           <span class="n">q1</span><span class="o">=</span><span class="n">qx_mid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy_mid</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">calls</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">)</span>
     <span class="n">cta</span> <span class="o">=</span> <span class="n">_get_current_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">)</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">cta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>

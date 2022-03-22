@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cpymad_lhc.corrector_limits &mdash; cpymad-lhc 0.0.2 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+          </a>
+              <div class="version">
+                0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cpymad-lhc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>cpymad_lhc.corrector_limits</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cpymad_lhc.corrector_limits</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Corrector Limits</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Checks whether the assigned strengths do not exceed a given maxima.</span>
+<span class="sd">If it does exceed it, depending on `limit_to_max` either an error is thrown</span>
+<span class="sd">or the strength is redefined to the maximum (while its sign is retained).</span>
+<span class="sd">All values are energy independent.</span>
+
+<span class="sd">The python script was adapted from</span>
+<span class="sd">errors/corr_limit.madx or errors/corr_value_limit.madx (depending on HL-LHC version)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span>
+
+<span class="kn">from</span> <span class="nn">cpymad_lhc.general</span> <span class="kn">import</span> <span class="n">_all_arcs</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">LOG_FORMAT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{name:&lt;10s}</span><span class="s2">    </span><span class="si">{val_str:&gt;10s}</span><span class="s2">    </span><span class="si">{max_str:&gt;10s}</span><span class="s2">    </span><span class="si">{allowed_str:&gt;10s}</span><span class="s2">&quot;</span>
+
+
+<span class="c1"># All values are defined as multiples of 0.3/Energy</span>
+<span class="n">LIMITS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;HLLHC&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">MQSX1</span><span class="o">=</span><span class="s1">&#39;kmax_MQSXF&#39;</span><span class="p">,</span>
+        <span class="n">MQSX2</span><span class="o">=</span><span class="mf">1.360</span><span class="o">/</span><span class="mf">0.017</span><span class="p">,</span>            <span class="c1"># 1.36 T @ 17 mm in IR2&amp;IR8</span>
+        <span class="n">MCSX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCSXF&#39;</span><span class="p">,</span>
+        <span class="n">MCSX2</span><span class="o">=</span><span class="mf">0.028</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>     <span class="c1"># 0.028 T @ 17 mm in IR2&amp;IR8</span>
+        <span class="n">MCSSX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCSSXF&#39;</span><span class="p">,</span>
+        <span class="n">MCSSX2</span><span class="o">=</span><span class="mf">0.11</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>     <span class="c1"># 0.11 T @ 17 mm in IR2&amp;IR8</span>
+        <span class="n">MCOX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCOXF&#39;</span><span class="p">,</span>
+        <span class="n">MCOX2</span><span class="o">=</span><span class="mf">0.045</span><span class="o">*</span><span class="mi">6</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>     <span class="c1"># 0.045 T @ 17 mm in IR2&amp;IR8</span>
+        <span class="n">MCOSX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCOSXF&#39;</span><span class="p">,</span>
+        <span class="n">MCOSX2</span><span class="o">=</span><span class="mf">0.048</span><span class="o">*</span><span class="mi">6</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>    <span class="c1"># 0.048 T @ 17 mm in IR2&amp;IR8</span>
+        <span class="n">MCDX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCDXF&#39;</span><span class="p">,</span>
+        <span class="n">MCDSX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCDSXF&#39;</span><span class="p">,</span>
+        <span class="n">MCTX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCTXF&#39;</span><span class="p">,</span>
+        <span class="n">MCTX2</span><span class="o">=</span><span class="mf">0.01</span><span class="o">*</span><span class="mi">120</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">5</span><span class="p">),</span>    <span class="c1"># 0.010 T @ 17 mm in IR2&amp;IR8</span>
+        <span class="n">MCTSX1</span><span class="o">=</span><span class="s1">&#39;kmax_MCTSXF&#39;</span><span class="p">,</span>
+        <span class="c1"># MQT=120,                      # 120 T/m    Deactivated in HLv1.4</span>
+        <span class="c1"># MQS=120,                      # 120 T/m    Deactivated in HLv1.4</span>
+        <span class="c1"># MS=1.280*2/(0.017**2),        # 1.28 T @ 17 mm  Deactivated in HLv1.4</span>
+        <span class="n">MSS</span><span class="o">=</span><span class="mf">1.280</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>       <span class="c1"># 1.28 T @ 17 mm</span>
+        <span class="n">MCS</span><span class="o">=</span><span class="mf">0.471</span><span class="o">*</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>       <span class="c1"># 0.471 T @ 17 mm</span>
+        <span class="n">MCO</span><span class="o">=</span><span class="mf">0.040</span><span class="o">*</span><span class="mi">6</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>       <span class="c1"># 0.04 T @ 17 mm</span>
+        <span class="n">MCD</span><span class="o">=</span><span class="mf">0.100</span><span class="o">*</span><span class="mi">24</span><span class="o">/</span><span class="p">(</span><span class="mf">0.017</span><span class="o">**</span><span class="mi">4</span><span class="p">),</span>      <span class="c1"># 0.1 T @ 17 mm</span>
+        <span class="c1"># MO=0.29*6/(0.017**3),         # 0.29 T @ 17 mm  Deactivated in HLv1.4</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+<span class="n">FD_FAMILIES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MO&#39;</span><span class="p">,</span> <span class="s1">&#39;MS&#39;</span><span class="p">,</span> <span class="s1">&#39;MQT&#39;</span><span class="p">}</span>  <span class="c1"># Magnets that have F and D families</span>
+<span class="n">TWO_FAMILIES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MS&#39;</span><span class="p">}</span>              <span class="c1"># Magnets that have 1 and 2 families</span>
+<span class="n">SPECIAL_FAMILIES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MQS&#39;</span><span class="p">}</span>         <span class="c1"># Magnets in every second arc</span>
+
+<span class="n">REL_ALLOWED</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">/</span> <span class="mi">7000</span>  <span class="c1"># see corr_limit.madx</span>
+
+
+<span class="k">class</span> <span class="nc">LimitChecks</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">madx</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">limit_to_max</span><span class="p">,</span> <span class="n">values_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Setup checks &#39;global&#39; variables. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mvars</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="n">beam</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit_to_max</span> <span class="o">=</span> <span class="n">limit_to_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_dict</span> <span class="o">=</span> <span class="n">values_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># reset at each `run_checks`</span>
+
+    <span class="k">def</span> <span class="nf">check_strength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">max_value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">/</span> <span class="n">max_value</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="n">LOG_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                  <span class="n">val_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">}</span><span class="s2">: .3e&quot;</span><span class="p">,</span>
+                                  <span class="n">max_str</span><span class="o">=</span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                                  <span class="n">allowed_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;unknown&quot;</span><span class="p">,</span>
+                                  <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">LOG_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                <span class="n">val_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">:</span><span class="s2"> .3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="n">max_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rel</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2"> .1e</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span>
+                                <span class="n">allowed_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rel</span><span class="o">/</span><span class="n">REL_ALLOWED</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2"> .0f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rel</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">REL_ALLOWED</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit_to_max</span><span class="p">:</span>
+                <span class="c1"># same as max_value*REL_ALLOWED*sign(self.mvars[name])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="n">REL_ALLOWED</span> <span class="o">/</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rel</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;  -&gt; set </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="si">:</span><span class="s1"> .1e</span><span class="si">}</span><span class="s1"> &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">/</span> <span class="n">max_value</span> <span class="o">*</span> <span class="mi">100</span><span class="si">:</span><span class="s1"> .1e</span><span class="si">}</span><span class="s1">% of max, 100% of allowed).&#39;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_ir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Loop over irs &quot;&quot;&quot;</span>
+        <span class="n">irs</span> <span class="o">=</span> <span class="s1">&#39;15&#39;</span> <span class="k">if</span> <span class="n">family</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span> <span class="k">else</span> <span class="s1">&#39;28&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;K</span><span class="si">{</span><span class="n">family</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">3&#39;</span>
+        <span class="k">for</span> <span class="n">ir</span> <span class="ow">in</span> <span class="n">irs</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">side</span> <span class="ow">in</span> <span class="s1">&#39;LR&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_strength</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">side</span><span class="si">}{</span><span class="n">ir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_arcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Loop over arcs &quot;&quot;&quot;</span>
+        <span class="n">fd_list</span> <span class="o">=</span> <span class="s1">&#39;FD&#39;</span> <span class="k">if</span> <span class="n">family</span> <span class="ow">in</span> <span class="n">FD_FAMILIES</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="n">num_list</span> <span class="o">=</span> <span class="s1">&#39;12&#39;</span> <span class="k">if</span> <span class="n">family</span> <span class="ow">in</span> <span class="n">TWO_FAMILIES</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">_all_arcs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">fd_list</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">num_list</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">check_strength</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;K</span><span class="si">{</span><span class="n">family</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}{</span><span class="n">fd</span><span class="si">}{</span><span class="n">num</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">arc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_special</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Loop over arcs but only every second one. &quot;&quot;&quot;</span>
+        <span class="n">arcs</span> <span class="o">=</span> <span class="n">_all_arcs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="p">)[(</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)::</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">arcs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_strength</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;K</span><span class="si">{</span><span class="n">family</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">arc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_strength</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;K</span><span class="si">{</span><span class="n">family</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">.L</span><span class="si">{</span><span class="n">arc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">B</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_strength</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;K</span><span class="si">{</span><span class="n">family</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">.R</span><span class="si">{</span><span class="n">arc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">B</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">beam</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Main check-loop over all families given in values_dict. &quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">LOG_FORMAT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Corrector&quot;</span><span class="p">,</span> <span class="n">val_str</span><span class="o">=</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">max_str</span><span class="o">=</span><span class="s2">&quot;Maximum&quot;</span><span class="p">,</span> <span class="n">allowed_str</span><span class="o">=</span><span class="s2">&quot;Allowed&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">family</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mvars</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">family</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="s1">&#39;12&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_ir</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">family</span> <span class="ow">in</span> <span class="n">SPECIAL_FAMILIES</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_special</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">check_arcs</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="check_corrector_limits"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.corrector_limits.check_corrector_limits">[docs]</a><span class="k">def</span> <span class="nf">check_corrector_limits</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">limit_to_max</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Wrapper to run the limit checks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx (Madx): MAD-X instance</span>
+<span class="sd">        accel (str): Accelerator to check.</span>
+<span class="sd">        beam (int): Beam to check</span>
+<span class="sd">        limit_to_max (bool): If ``True`` set the value to the max if above limit.</span>
+<span class="sd">                             If ``False`` will raise ``ValueError`` after finding</span>
+<span class="sd">                             too high values. Default: ``False``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">values_dict</span> <span class="o">=</span> <span class="n">LIMITS</span><span class="p">[</span><span class="n">accel</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Accelerator </span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s1"> not implemented.&#39;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking corrector limits for </span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s2"> beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="n">checks</span> <span class="o">=</span> <span class="n">LimitChecks</span><span class="p">(</span><span class="n">madx</span><span class="o">=</span><span class="n">madx</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span>
+                         <span class="n">limit_to_max</span><span class="o">=</span><span class="n">limit_to_max</span><span class="p">,</span>
+                         <span class="n">values_dict</span><span class="o">=</span><span class="n">values_dict</span><span class="p">)</span>
+    <span class="n">checks</span><span class="o">.</span><span class="n">run_checks</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">checks</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;One or more strengths are out of its limits, see log.&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
