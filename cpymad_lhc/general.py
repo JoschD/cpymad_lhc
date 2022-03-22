@@ -297,7 +297,7 @@ def dynamic_aperture_tracking(madx: Madx, sigmas: Sequence[int], n_angles: int,
 # Errors -----------------------------------------------------------------------
 
 
-def switch_magentic_errors(madx: Madx, **kwargs):
+def switch_magnetic_errors(madx: Madx, **kwargs):
     """ Which magnetic field orders to apply.
 
     Args:

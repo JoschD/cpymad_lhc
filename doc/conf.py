@@ -190,7 +190,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "cpymad-lhc.tex", "cpymad-lhc Documentation", "pyLHC/OMC-TEAM", "manual"),
+    (master_doc, "cpymad-lhc.tex", "cpymad-lhc Documentation", "JoschD", "manual"),
 ]
 
 # -- Options for manual page output ---------------------------------------
