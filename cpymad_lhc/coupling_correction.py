@@ -17,7 +17,7 @@ LOG = logging.getLogger(__name__)
 
 
 def correct_coupling(madx: Madx, accel: str, sequence: str,
-                     squeezed: bool = False, **kwargs):
+                     knobs_suffix: str = "", **kwargs):
     """ Wrapper for coupling correction to use the default knob-names if not
      otherwise given.
 
@@ -25,7 +25,7 @@ def correct_coupling(madx: Madx, accel: str, sequence: str,
         madx: Madx instance
         accel: Accelerator we are using 'LHC' or 'HLLHC'
         sequence: Sequence to use
-        squeezed: Use squeezed knobs (`_sq`)
+        knobs_suffix: Use suffix with knobs ( e.g. `_sq`)
 
     Keyword Args:
         Other arguments of `correct_coupling_with_knobs`
@@ -35,11 +35,9 @@ def correct_coupling(madx: Madx, accel: str, sequence: str,
         if len(not_defined):
             raise KeyError(f"Knobs {not_defined} are not defined in sequence!")
 
-    knobs_dict = _get_default_knob_names(accel, sequence)
+    knobs_dict = _get_default_knob_names(accel, sequence, suffix=knobs_suffix)
     for knob_arg, knob_names in knobs_dict.items():
         if knob_arg not in kwargs:
-            if squeezed:
-                knob_names = tuple(f"{k}_sq" for k in knob_names)
             check_knobs(knob_names)
             kwargs[knob_arg] = knob_names
 
@@ -139,10 +137,10 @@ def _get_middle_tunes(qx: float, qy: float) -> Tuple[float, float]:
     return qx_mid, qy_mid
 
 
-def _get_default_knob_names(accel: str, sequence: str) -> dict:
+def _get_default_knob_names(accel: str, sequence: str, suffix: str = "") -> dict:
     """ Get tune, chroma and coupling knobs. """
-    tune_chroma_knobs = list(get_tune_and_chroma_knobs(accel, int(sequence[-1])))
-    coupling_knobs = list(get_coupling_knobs(accel, int(sequence[-1])))
+    tune_chroma_knobs = list(get_tune_and_chroma_knobs(accel, int(sequence[-1]), suffix=suffix))
+    coupling_knobs = list(get_coupling_knobs(accel, int(sequence[-1]), suffix=suffix))
     return dict(tune_knobs=tune_chroma_knobs[:2],
                 chroma_knobs=tune_chroma_knobs[2:],
                 coupling_knobs=coupling_knobs)
