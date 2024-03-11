@@ -6,15 +6,15 @@ Some helper functions for cpymad, that would be complicated macros in MAD-X.
 """
 import logging
 import shutil
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 from functools import partial
 from pathlib import Path
-from typing import Sequence, Tuple, List
+from typing import List, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
 import tfs
-from cpymad.madx import Table, Madx
+from cpymad.madx import Madx, Table
 
 LOG = logging.getLogger(__name__)
 
@@ -490,7 +490,7 @@ def power_landau_octupoles(madx: Madx, mo_current: float, beam: int, defective_a
              f"at Energy {mvars.nrj} GeV with {mo_current} A.")
     strength = mo_current / mvars.Imax_MO * mvars.Kmax_MO / brho
     beam = 2 if beam == 4 else beam
-    for arc in _all_arcs(beam):
+    for arc in lhc_arc_names(beam):
         for fd in "FD":
             mvars[f"KO{fd}.{arc}"] = strength
 
@@ -510,7 +510,7 @@ def deactivate_arc_sextupoles(madx: Madx, beam: int):
     # Rest: Weak sextupoles in sectors 78/23/34/67
     LOG.info(f"Deactivating all arc sextupoles for beam {beam}.")
     beam = 2 if beam == 4 else beam
-    for arc in _all_arcs(beam):
+    for arc in lhc_arc_names(beam):
         for fd in 'FD':
             for i in (1, 2):
                 madx.globals[f'KS{fd}{i:d}.{arc}'] = 0.0
@@ -549,12 +549,24 @@ def auto_dtype(df):
         return df.apply(partial(pd.to_numeric, errors='ignore'))
 
 
-def _all_arcs(beam: int):
+def lhc_arcs() -> List[str]:
+    """ Strings of all LHC arcs. """
+    return [f"{i}{i%8+1}" for i in range(1, 9)]
+
+
+def lhc_arc_names(beam: int) -> List[str]:
     """ Names of all arcs for given beam. """
-    return [f'A{i+1}{(i+1)%8+1}B{beam:d}' for i in range(8)]
+    return [f'A{arc}B{beam:d}' for arc in lhc_arcs()]
 
 
-def get_k_strings(start=0, stop=8, orientation='both'):
+def get_k_strings(start: int = 0, stop: int = 8, orientation: str = 'both'):
+    """Return all K-column names for a given range.
+
+    Args:
+        start: lowest order to include. Default 0.
+        stop: highest order + 1 to include (same as in `range()`). Default 8.
+        orientation: 'S' for skew, '' for normal, 'both' for both
+    """
     if orientation == 'both':
         orientation = ('', 'S')
     elif orientation == 'skew':
@@ -563,3 +575,14 @@ def get_k_strings(start=0, stop=8, orientation='both'):
         orientation = ('',)
 
     return [f"K{i:d}{s:s}L" for i in range(start, stop) for s in orientation]
+
+
+@contextmanager
+def temp_disable_errors(madx: Madx, *args):
+    """ Disable all global variable args and restore their value afterwards."""
+    saved = {}
+    for arg in args:
+        saved[arg] = madx.globals[arg]
+        madx.globals[arg] = 0
+    yield
+    madx.globals.update(saved)

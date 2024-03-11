@@ -25,7 +25,7 @@ X Crossing offsets - opposite sign (i.e. same sides)
 Y Separation - opposite sign (i.e. opposite sides)
 """
 import re
-from typing import Iterable, Union
+from typing import Iterable, Union, Dict
 
 from cpymad.madx import Madx
 from pandas import DataFrame
@@ -38,56 +38,72 @@ from cpymad_lhc.general import get_tfs
 LOG = logging.getLogger(__name__)
 
 
-CROSSING_SCHEMES = {  # from tracking masks
-    'flat': {},
-    'lhc_inj': {
-        'on_x1':  170, 'on_sep1': -2,
-        'on_x2':  170, 'on_sep2': 3.5,
-        'on_x5':  170, 'on_sep5': 2,
-        'on_x8': -170, 'on_sep8': -3.5,
-        'phi_ir1': 90, 'phi_ir5': 0,
-        'phi_ir2': 90, 'phi_ir8': 180,
-    },
-    'lhc_top': {
-        'on_x1':  160, 'on_sep1': -0.55,
-        'on_x2':  200, 'on_sep2': 1.4,
-        'on_x5':  160, 'on_sep5': 0.55,
-        'on_x8': -250, 'on_sep8': -1,
-        'phi_ir1': 90, 'phi_ir5': 0,
-        'phi_ir2': 90, 'phi_ir8': 180,
-    },
-    'lhc2022_top': {
-        'on_x1_v': -160, 'on_sep1_h': -0.55,
-        'on_x1_h':    0, 'on_sep1_v':  0.0,
-        'on_x2v':   200, 'on_sep2h':   1.0,
-        'on_x2h':     0, 'on_sep2v':   0.0,
-        'on_x5_h':  160, 'on_sep5_v':  0.55,
-        'on_x5_v':    0, 'on_sep5_h':  0.0,
-        'on_x8h':  -200, 'on_sep8v':  -1.0,
-        'on_x8v':     0, 'on_sep8h':   0.0,
-    },
-    'hllhc_inj': {
-        'on_x1':  295, 'on_sep1': -2,
-        'on_x2':  170, 'on_sep2': 3.5, 'on_a2': -40,
-        'on_x5':  295, 'on_sep5': 2,
-        'on_x8': -170, 'on_sep8': -3.5, 'on_a8': -40,
-        'on_crab1': 0, 'on_crab5': 0,
-        'phi_ir1': 0, 'phi_ir5': 90,
-        'phi_ir2': 90, 'phi_ir8': 0,
-    },
-    'hllhc_top': {
-        'on_x1':  250, 'on_sep1': -0.75,
-        'on_x2':  170, 'on_sep2': 1,
-        'on_x5':  250, 'on_sep5': 0.75,
-        'on_x8': -200, 'on_sep8': -1,
-        'on_crab1': -190, 'on_crab5': -190,
-        'phi_ir1': 0, 'phi_ir5': 90,
-        'phi_ir2': 90, 'phi_ir8': 0,
-    },
-}
+def crossing_schemes(scheme: str, accel: str, year: int = 2018) -> Dict[str, float]:  # from tracking masks
+    if scheme == 'flat':
+        return {}
+
+    if accel == 'lhc':
+        # Old crossing variables before run III
+        if year < 2020:
+            return{
+                'inj': {
+                    'on_x1':  170, 'on_sep1': -2,
+                    'on_x2':  170, 'on_sep2': 3.5,
+                    'on_x5':  170, 'on_sep5': 2,
+                    'on_x8': -170, 'on_sep8': -3.5,
+                    'phi_ir1': 90, 'phi_ir5': 0,
+                    'phi_ir2': 90, 'phi_ir8': 180,
+                },
+                'top': {
+                    'on_x1':  160, 'on_sep1': -0.55,
+                    'on_x2':  200, 'on_sep2': 1.4,
+                    'on_x5':  160, 'on_sep5': 0.55,
+                    'on_x8': -250, 'on_sep8': -1,
+                    'phi_ir1': 90, 'phi_ir5': 0,
+                    'phi_ir2': 90, 'phi_ir8': 180,
+                },
+            }[scheme]
+
+        # New crossing variables since run III
+        return {
+            'top': {
+                'on_x1_v': -160, 'on_sep1_h': -0.55,
+                'on_x1_h':    0, 'on_sep1_v':  0.0,
+                'on_x2v':   200, 'on_sep2h':   1.0,
+                'on_x2h':     0, 'on_sep2v':   0.0,
+                'on_x5_h':  160, 'on_sep5_v':  0.55,
+                'on_x5_v':    0, 'on_sep5_h':  0.0,
+                'on_x8h':  -200, 'on_sep8v':  -1.0,
+                'on_x8v':     0, 'on_sep8h':   0.0,
+            },
+        }[scheme]    
+
+    elif accel == 'hllhc':
+        return {
+            'inj': {
+                'on_x1':  295, 'on_sep1': -2,
+                'on_x2':  170, 'on_sep2': 3.5, 'on_a2': -40,
+                'on_x5':  295, 'on_sep5': 2,
+                'on_x8': -170, 'on_sep8': -3.5, 'on_a8': -40,
+                'on_crab1': 0, 'on_crab5': 0,
+                'phi_ir1': 0, 'phi_ir5': 90,
+                'phi_ir2': 90, 'phi_ir8': 0,
+            },
+            'top': {
+                'on_x1':  250, 'on_sep1': -0.75,
+                'on_x2':  170, 'on_sep2': 1,
+                'on_x5':  250, 'on_sep5': 0.75,
+                'on_x8': -200, 'on_sep8': -1,
+                'on_crab1': -190, 'on_crab5': -190,
+                'phi_ir1': 0, 'phi_ir5': 90,
+                'phi_ir2': 90, 'phi_ir8': 0,
+            },
+        }[scheme]
+
+    raise KeyError(f"Unknown crossing scheme: {scheme}")
 
 
-def get_orbit_variables(accel: str, year: int = 2022):
+def get_orbit_variables(accel: str, year: int = 2018):
     """ Get the variable names used for orbit setup.
     Args:
         accel (str): 'lhc' or 'hllhc'
@@ -171,15 +187,7 @@ def orbit_setup(madx: Madx, accel: str, year: int = 2018, **kwargs):
 
     if scheme_key is not None:
         default = 0
-        for key in (f'{accel.lower()}_{scheme_key.lower()}' , scheme_key.lower()):
-            try:
-                scheme = CROSSING_SCHEMES[key]
-            except KeyError:
-                pass
-            else:
-                break
-        else:
-            raise KeyError(f"Scheme '{scheme_key}' not recognized.")
+        scheme = crossing_schemes(scheme=key, accel=accel, year=year)
 
     for var in variables:
         set_value(var, kwargs.get(var, scheme.get(var, default)))
