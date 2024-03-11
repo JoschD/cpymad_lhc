@@ -187,7 +187,7 @@ def orbit_setup(madx: Madx, accel: str, year: int = 2018, **kwargs):
 
     if scheme_key is not None:
         default = 0
-        scheme = crossing_schemes(scheme=key, accel=accel, year=year)
+        scheme = crossing_schemes(scheme=scheme_key, accel=accel, year=year)
 
     for var in variables:
         set_value(var, kwargs.get(var, scheme.get(var, default)))
