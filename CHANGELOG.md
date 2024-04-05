@@ -1,12 +1,12 @@
 # Changelog
 
 
-## IN PROGRESS Version 0.1.0
+## 2024-04-05 Version 0.1.0
 
 - Added:
   - new (>2022) lhc orbit variabes and related changes in corresponding functions
   - flexible knob-suffix instead of pre-defined "_sq"
-  - new functions: `temp_disable_errors` and `lhc_arc_names` in `general.py`
+  - new functions: `temp_disable_errors`, `lhc_arc_names` and `add_expression` in `general.py`
   - Coupling knob creation
 
 
