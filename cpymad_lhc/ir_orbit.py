@@ -25,7 +25,7 @@ X Crossing offsets - opposite sign (i.e. same sides)
 Y Separation - opposite sign (i.e. opposite sides)
 """
 import re
-from typing import Iterable, Union
+from typing import Iterable, Union, Dict
 
 from cpymad.madx import Madx
 from pandas import DataFrame
@@ -38,49 +38,76 @@ from cpymad_lhc.general import get_tfs
 LOG = logging.getLogger(__name__)
 
 
-CROSSING_SCHEMES = {  # from tracking masks
-    'flat': {},
-    'lhc_inj': {
-        'on_x1':  170, 'on_sep1': -2,
-        'on_x2':  170, 'on_sep2': 3.5,
-        'on_x5':  170, 'on_sep5': 2,
-        'on_x8': -170, 'on_sep8': -3.5,
-        'phi_ir1': 90, 'phi_ir5': 0,
-        'phi_ir2': 90, 'phi_ir8': 180,
-    },
-    'lhc_top': {
-        'on_x1':  160, 'on_sep1': -0.55,
-        'on_x2':  200, 'on_sep2': 1.4,
-        'on_x5':  160, 'on_sep5': 0.55,
-        'on_x8': -250, 'on_sep8': -1,
-        'phi_ir1': 90, 'phi_ir5': 0,
-        'phi_ir2': 90, 'phi_ir8': 180,
-    },
-    'hllhc_inj': {
-        'on_x1':  295, 'on_sep1': -2,
-        'on_x2':  170, 'on_sep2': 3.5, 'on_a2': -40,
-        'on_x5':  295, 'on_sep5': 2,
-        'on_x8': -170, 'on_sep8': -3.5, 'on_a8': -40,
-        'on_crab1': 0, 'on_crab5': 0,
-        'phi_ir1': 0, 'phi_ir5': 90,
-        'phi_ir2': 90, 'phi_ir8': 0,
-    },
-    'hllhc_top': {
-        'on_x1':  250, 'on_sep1': -0.75,
-        'on_x2':  170, 'on_sep2': 1,
-        'on_x5':  250, 'on_sep5': 0.75,
-        'on_x8': -200, 'on_sep8': -1,
-        'on_crab1': -190, 'on_crab5': -190,
-        'phi_ir1': 0, 'phi_ir5': 90,
-        'phi_ir2': 90, 'phi_ir8': 0,
-    },
-}
+def crossing_schemes(scheme: str, accel: str, year: int = 2018) -> Dict[str, float]:  # from tracking masks
+    if scheme == 'flat':
+        return {}
+
+    if accel == 'lhc':
+        # Old crossing variables before run III
+        if year < 2020:
+            return{
+                'inj': {
+                    'on_x1':  170, 'on_sep1': -2,
+                    'on_x2':  170, 'on_sep2': 3.5,
+                    'on_x5':  170, 'on_sep5': 2,
+                    'on_x8': -170, 'on_sep8': -3.5,
+                    'phi_ir1': 90, 'phi_ir5': 0,
+                    'phi_ir2': 90, 'phi_ir8': 180,
+                },
+                'top': {
+                    'on_x1':  160, 'on_sep1': -0.55,
+                    'on_x2':  200, 'on_sep2': 1.4,
+                    'on_x5':  160, 'on_sep5': 0.55,
+                    'on_x8': -250, 'on_sep8': -1,
+                    'phi_ir1': 90, 'phi_ir5': 0,
+                    'phi_ir2': 90, 'phi_ir8': 180,
+                },
+            }[scheme]
+
+        # New crossing variables since run III
+        return {
+            'top': {
+                'on_x1_v': -160, 'on_sep1_h': -0.55,
+                'on_x1_h':    0, 'on_sep1_v':  0.0,
+                'on_x2v':   200, 'on_sep2h':   1.0,
+                'on_x2h':     0, 'on_sep2v':   0.0,
+                'on_x5_h':  160, 'on_sep5_v':  0.55,
+                'on_x5_v':    0, 'on_sep5_h':  0.0,
+                'on_x8h':  -200, 'on_sep8v':  -1.0,
+                'on_x8v':     0, 'on_sep8h':   0.0,
+            },
+        }[scheme]    
+
+    elif accel == 'hllhc':
+        return {
+            'inj': {
+                'on_x1':  295, 'on_sep1': -2,
+                'on_x2':  170, 'on_sep2': 3.5, 'on_a2': -40,
+                'on_x5':  295, 'on_sep5': 2,
+                'on_x8': -170, 'on_sep8': -3.5, 'on_a8': -40,
+                'on_crab1': 0, 'on_crab5': 0,
+                'phi_ir1': 0, 'phi_ir5': 90,
+                'phi_ir2': 90, 'phi_ir8': 0,
+            },
+            'top': {
+                'on_x1':  250, 'on_sep1': -0.75,
+                'on_x2':  170, 'on_sep2': 1,
+                'on_x5':  250, 'on_sep5': 0.75,
+                'on_x8': -200, 'on_sep8': -1,
+                'on_crab1': -190, 'on_crab5': -190,
+                'phi_ir1': 0, 'phi_ir5': 90,
+                'phi_ir2': 90, 'phi_ir8': 0,
+            },
+        }[scheme]
+
+    raise KeyError(f"Unknown crossing scheme: {scheme}")
 
 
-def get_orbit_variables(accel: str):
+def get_orbit_variables(accel: str, year: int = 2018):
     """ Get the variable names used for orbit setup.
     Args:
         accel (str): 'lhc' or 'hllhc'
+        year (int): year of the models/optics (for 'lhc')
 
     Returns:
         tuple of 0: list of all orbit variables, apart form those in 1
@@ -99,27 +126,38 @@ def get_orbit_variables(accel: str):
         )
         special = {}
     else:
-        on_variables = (
-            'x1', 'sep1', 'o1', 'oh1', 'ov1',
-            'x2', 'sep2', 'o2', 'oe2', 'a2', 'oh2', 'ov2',
-            'x5', 'sep5', 'o5', 'oh5', 'ov5',
-            'x8', 'sep8', 'o8', 'a8', 'sep8h', 'x8v', 'oh8', 'ov8',
-            'alice', 'sol_alice', 'lhcb', 'sol_atlas', 'sol_cms',
-        )
-        special = {'on_ssep1': 'on_sep1', 'on_xx1': 'on_x1',
-                   'on_ssep5': 'on_sep5', 'on_xx5': 'on_x5',
-                   }
+        if year < 2020:
+            on_variables = (
+                'x1', 'sep1', 'o1', 'oh1', 'ov1',
+                'x2', 'sep2', 'o2', 'oe2', 'a2', 'oh2', 'ov2',
+                'x5', 'sep5', 'o5', 'oh5', 'ov5',
+                'x8', 'sep8', 'o8', 'a8', 'sep8h', 'x8v', 'oh8', 'ov8',
+                'alice', 'sol_alice', 'lhcb', 'sol_atlas', 'sol_cms',
+            )
+            special = {'on_ssep1': 'on_sep1', 'on_xx1': 'on_x1',
+                       'on_ssep5': 'on_sep5', 'on_xx5': 'on_x5',
+                       }
+        else:
+            on_variables = (
+                'x1_v', 'sep1_v', 'x1_h', 'sep1_h',
+                'x5_v', 'sep5_v', 'x5_h', 'sep5_h',
+                'x2v', 'sep2v', 'x2h', 'sep2h', 'o2', 'a2', 'oh2', 'ov2',
+                'x8v', 'sep8v', 'x8h', 'sep8h', 'o8', 'a8', 'oh8', 'ov8',
+                'alice', 'sol_alice', 'lhcb', 'sol_atlas', 'sol_cms',
+            )
+            special = dict()
     variables = [f'on_{var}' for var in on_variables] + [f'phi_ir{ir:d}' for ir in (1, 2, 5, 8)]
     return variables, special
 
 
-def orbit_setup(madx: Madx, accel: str, **kwargs):
+def orbit_setup(madx: Madx, accel: str, year: int = 2018, **kwargs):
     """ Automated orbit setup for some default schemes.
     Please check if these are still valid.
 
     Args:
         madx: Madx instance
         accel (str): 'lhc' or 'hllhc'
+        year (int): year of the models/optics (for 'lhc')
 
     Keyword Args:
         scheme: default orbit scheme to apply.
@@ -134,7 +172,7 @@ def orbit_setup(madx: Madx, accel: str, **kwargs):
         dictionary with current settings of the scheme.
     """
     kwargs = {k.lower(): v for k, v in kwargs.items()}
-    variables, special = get_orbit_variables(accel)
+    variables, special = get_orbit_variables(accel, year)
     scheme_key = kwargs.get('scheme', 'flat')
     mvars = madx.globals
     full_scheme = {}
@@ -149,15 +187,7 @@ def orbit_setup(madx: Madx, accel: str, **kwargs):
 
     if scheme_key is not None:
         default = 0
-        for key in (f'{accel.lower()}_{scheme_key.lower()}' , scheme_key.lower()):
-            try:
-                scheme = CROSSING_SCHEMES[key]
-            except KeyError:
-                pass
-            else:
-                break
-        else:
-            raise KeyError(f"Scheme '{scheme_key}' not recognized.")
+        scheme = crossing_schemes(scheme=scheme_key, accel=accel, year=year)
 
     for var in variables:
         set_value(var, kwargs.get(var, scheme.get(var, default)))
@@ -168,17 +198,19 @@ def orbit_setup(madx: Madx, accel: str, **kwargs):
     return full_scheme
 
 
-def get_current_orbit_scheme(madx: Madx, accel: str):
+def get_current_orbit_scheme(madx: Madx, accel: str, year: int = 2018):
     """ Get the current values for the orbit variales.
 
     Args:
         madx: Madx instance
+        accel (str): 'lhc' or 'hllhc'
+        year (int): year of the models/optics (for 'lhc')
 
     Returns:
         Dictionary of all orbit variables and their value/definition.
 
     """
-    variables, special = get_orbit_variables(accel)
+    variables, special = get_orbit_variables(accel, year)
     return {var: madx.globals.defs[var] for var in variables + list(special.keys()) if var in madx.globals}
 
 
@@ -207,24 +239,24 @@ def check_crabbing(madx: Madx, auto_set: bool = False):
 # Orbit Checks -----------------------------------------------------------------
 
 
-def log_orbit(madx: Madx, accel: str, twiss: TfsDataFrame = None, ip: Union[Iterable[int], int] = None):
+def log_orbit(madx: Madx, accel: str, year: int = 2018, twiss: TfsDataFrame = None, ip: Union[Iterable[int], int] = None):
     """ Get the orbit from madx-instance and twiss-dataframe and
     log the configuration per IP. """
     if twiss is None:
         twiss = get_tfs(madx.table.twiss, columns=['NAME', 'S', 'X', 'Y', 'PX', 'PY'])
 
-    variables = get_current_orbit_scheme(madx, accel)  # takes a few seconds, so do here
+    variables = get_current_orbit_scheme(madx, accel, year)  # takes a few seconds, so do here
     for ip in _get_ip_iterable(ip):
         log_orbit_from_madx(madx, accel, ip, variables)
         log_orbit_from_twiss(twiss, ip)
 
 
-def log_orbit_from_madx(madx: Madx, accel: str,
+def log_orbit_from_madx(madx: Madx, accel: str, year: int = 2018,
                         ip: Union[Iterable[int], int] = None,
                         variables: Iterable[str] = None):
     """ Log current orbit scheme sorted by IP. """
     if variables is None:
-        variables = get_current_orbit_scheme(madx, accel)
+        variables = get_current_orbit_scheme(madx, accel, year)
 
     for ip in _get_ip_iterable(ip):
         for k, v in variables.items():

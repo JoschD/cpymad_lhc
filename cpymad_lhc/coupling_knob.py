@@ -7,12 +7,15 @@ Not implemented yet. TODO!
 """
 
 from operator import itemgetter
-from typing import Sequence
+from pathlib import Path
+from typing import Sequence, Union
 
 # from optics_functions.coupling import coupling_via_cmatrix
 import pandas as pd
 from cpymad.madx import Madx
+from cpymad_lhc.general import lhc_arcs, get_coupling_knobs, get_tfs, add_expression
 import numpy as np
+import tfs
 
 import logging
 
@@ -63,3 +66,141 @@ def get_attribute_response(madx: Madx, sequence: str, variables: Sequence[str], 
     # drop all-zero rows
     df = df.loc[(df!=0).any(axis=1)]
     return df
+
+
+# Old-School Coupling Knobs -------------------
+SINGLE_KQS_LISTS = {
+# Sectors with commonly powered MQSs
+    1: ['23', '45', '67', '81'],
+    2: ['12', '34', '56', '78'], 
+}
+
+
+def calculate_coupling_coefficients_per_sector(
+        df: tfs.TfsDataFrame, 
+        deactivate_sectors: Sequence[str] = ('12', '45', '56', '81')
+    ) -> tfs.TfsDataFrame:
+    """ Calculate the coupling knob coefficients as in corr_MB_ats_v4.
+    This is basically Eq. (59) in https://cds.cern.ch/record/522049/files/lhc-project-report-501.pdf ,
+    with cosine for the real part and sine for the imaginary part.
+    What is happening here is, that we are building a matrix for the equation-system
+    M * [MQS12,..., MQS81] = -[RE, IM]
+    where RE and IM are the real and imaginary parts of the coupling coefficients, 
+    and therefore the knobs we want to create.
+    MQS12 - MQS81 is the total powering of the MQS per arc, which we steer with 
+    the knob. All MQS in a single arc are assumed to be powered equally.
+    After building the matrix, we "solve" the equation system via pseudo-inverese M+
+    and get therefore the definition of the coupling knob.
+    [MQS12,..., MQS81] = - M+ * [RE, IM]
+    HINT: The MINN function in corr_MB_ats_v4 is simply the calculation the pseudo-inverse:
+    M+  = M' (M * M')^-1  (' = transpose, ^-1 = inverse)
+    including the minus on the rhs of the equation.
+    TODO:
+        - Get beta and phases from the beamline directly (instead of the TFS dataframe)
+        - Make the number of MQS more flexible, could maybe be parsed from the beamline
+        - Why is there an absolute value in Eq. (59) but not in the code? (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)
+        - Add a2 correction to the KQS definition (as in corr_MB_ats_v4)
+        - Include the actual fractional tune split of the current machine (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)
+        - Calculate also the contribution to f_1010 and try to set to zero
+        - Does this still work when slicing the MQS?
+    Args:
+        df (tfs.TfsDataFrame): 
+            Dataframe containing the optics of the machine. 
+        deactivate_sectors (Sequence[str], optional): 
+            Deactivate these sectors, i.e. don't use their MQS. 
+            Defaults to ('12', '45', '56', '81'), the ATS sectors.
+    """
+    BETX, BETY, MUX, MUY = "BETX", "BETY", "MUX", "MUY"
+    MQS_PER_SECTOR = 4  # TODO: get from line (?)
+    LENGTH_MQS = 0.32  # TODO: get from l.mqs
+
+    sectors = lhc_arcs()
+
+    mqs_sectors = [fr"MQS\..*(R{s[0]}|L{s[1]})\.B" for s in sectors]
+    m = np.ndarray([2, len(sectors)])
+
+    for idx_sector, mqs_regex in enumerate(mqs_sectors):
+        sector_mqs_slices = df.index.str.match(mqs_regex)
+        df_mqs = df.loc[sector_mqs_slices]
+
+        contribution_per_slice = MQS_PER_SECTOR / len(df_mqs)  # Knobs are not automatically normalized on slicing?
+        coeff = contribution_per_slice * np.sqrt(df_mqs[BETX] * df_mqs[BETY])
+        phase = 2*np.pi * (df_mqs[MUX] - df_mqs[MUY])
+
+        for idx, fun in enumerate((np.cos, np.sin)):
+            m[idx, idx_sector] =  (coeff * fun(phase)).sum() 
+
+    m = m * LENGTH_MQS  / (2 * np.pi)  # kqs knobs are multiplied by the length of the MQS
+
+    if deactivate_sectors:
+        mask = [s in deactivate_sectors for s in sectors]
+        m[: , mask] = 0
+
+    result = tfs.TfsDataFrame(
+        data=-np.linalg.pinv(m),
+        index=sectors, 
+        columns=["re", "im"]
+    )
+
+    # remove numerical noise:
+    result = result.where(result.abs() > 1e-15, 0)
+
+    return result
+
+
+def create_coupling_knobs(madx: Madx, beam: int, accel: str, optics: Union[Path, tfs.TfsDataFrame] = None):
+    """ Create coupling knobs in the beam-line.
+    WARNING: This function will not take a2 errors into account! 
+    Normally, the a2 errors are also corrected with the MQS, but in this function 
+    the MQS powering is fully controlled by the coupling knobs. 
+    See also the todo's in :func:`xmask.lhc.knob_manipulations.calculate_coupling_coefficients_per_sector`
+    Args:
+        madx (Madx): Madx instance to incorporate the knobs in
+        beam (int): Beam number.
+        optics (Path, tfs.TfsDataFrame, optional): 
+            Path or TfsDataFrame of the twiss containing the optics to be used. 
+            If not given, a twiss will be computed. Defaults to None.
+    """
+    LOG.info(f"Creating Coupling Knobs for beam {beam} ---")
+    mvars = madx.globals
+
+    if beam == 4:
+        beam = 2  # same behaviour in this case
+
+    beam_sign = 1 if beam == 1 else -1
+
+
+    if optics is None:
+        madx.twiss()
+        df = get_tfs(madx.table.twiss)
+    elif isinstance(optics, Path):
+        df = tfs.read(optics, index="NAME")
+    else:
+        df = optics
+
+    assert int(df.headers["SEQUENCE"][-1]) == beam, f"Wrong optics file for beam {beam}!"
+
+    df = beam_sign * calculate_coupling_coefficients_per_sector(df)
+
+    knob_name_real, knob_name_imag = get_coupling_knobs(accel, beam)
+
+    mvars[knob_name_real] = 0
+    mvars[knob_name_imag] = 0
+
+    for sector in df.index:
+        coeff_real = df.loc[sector, "re"]
+        coeff_imag = df.loc[sector, "im"]
+
+        coeff_name_real = f"coeff_skew_re_arc{sector}_b{beam}"
+        coeff_name_imag = f"coeff_skew_im_arc{sector}_b{beam}"
+
+        mvars[coeff_name_real] = coeff_real
+        mvars[coeff_name_imag] = coeff_imag
+
+        definition_str = f"{coeff_name_real} * {knob_name_real} + {coeff_name_imag} * {knob_name_imag}"
+
+        if sector in SINGLE_KQS_LISTS[beam]:
+            add_expression(madx, f"kqs.a{sector}b{beam}", definition_str)
+        else:
+            add_expression(madx, f"kqs.r{sector[0]}b{beam}", definition_str)
+            add_expression(madx, f"kqs.l{sector[1]}b{beam}", definition_str)

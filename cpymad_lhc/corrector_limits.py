@@ -14,7 +14,7 @@ import logging
 
 from cpymad.madx import Madx
 
-from cpymad_lhc.general import _all_arcs
+from cpymad_lhc.general import lhc_arc_names
 
 LOG = logging.getLogger(__name__)
 LOG_FORMAT = "{name:<10s}    {val_str:>10s}    {max_str:>10s}    {allowed_str:>10s}"
@@ -108,14 +108,14 @@ class LimitChecks:
         """ Loop over arcs """
         fd_list = 'FD' if family in FD_FAMILIES else ['']
         num_list = '12' if family in TWO_FAMILIES else ['']
-        for arc in _all_arcs(self.beam):
+        for arc in lhc_arc_names(self.beam):
             for fd in fd_list:
                 for num in num_list:
                     self.check_strength(f'K{family[1:]}{fd}{num}.{arc}', value)
 
     def check_special(self, family, value):
         """ Loop over arcs but only every second one. """
-        arcs = _all_arcs(self.beam)[(self.beam % 2)::2]
+        arcs = lhc_arc_names(self.beam)[(self.beam % 2)::2]
         for arc in arcs:
             self.check_strength(f'K{family[1:]}.{arc}', value)
             self.check_strength(f'K{family[1:]}.L{arc[1]}B{self.beam:d}', value)

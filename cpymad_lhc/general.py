@@ -6,15 +6,15 @@ Some helper functions for cpymad, that would be complicated macros in MAD-X.
 """
 import logging
 import shutil
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 from functools import partial
 from pathlib import Path
-from typing import Sequence, Tuple, List
+from typing import List, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
 import tfs
-from cpymad.madx import Table, Madx
+from cpymad.madx import Madx, Table
 
 LOG = logging.getLogger(__name__)
 
@@ -323,12 +323,13 @@ def switch_magnetic_errors(madx: Madx, **kwargs):
 
 # Knobs ------------------------------------------------------------------------
 
-def get_coupling_knobs(accel: str, beam: int) -> Tuple[str, str]:
+def get_coupling_knobs(accel: str, beam: int, suffix: str = "") -> Tuple[str, str]:
     """ Get names of knobs to change coupling as tuple of strings.
 
     Args:
         accel: Accelerator either 'LHC'  or 'HLLHC'
         beam: Beam to use, for the (LHC) knob names
+        suffix (str): suffix to add to the knobs, e.g. `_sq`
 
     Returns:
         Tuple of strings like `(real_knob, imaginary_knob)`
@@ -336,20 +337,21 @@ def get_coupling_knobs(accel: str, beam: int) -> Tuple[str, str]:
     beam = 2 if beam == 4 else beam
     try:
         return {
-            'LHC': (f'cmrs.b{beam}', f'cmis.b{beam}'),
+            'LHC': (f'cmrs.b{beam}{suffix}', f'cmis.b{beam}{suffix}'),
             'HLLHC': ('cmrskew', 'cmiskew'),
         }[accel.upper()]
     except KeyError:
         raise KeyError(f"Accelerator '{accel}' not recognized.")
 
 
-def get_tune_and_chroma_knobs(accel: str, beam: int) -> Tuple[str, str, str, str]:
+def get_tune_and_chroma_knobs(accel: str, beam: int, suffix: str = '') -> Tuple[str, str, str, str]:
     """ Get names of knobs to change tune and chromaticity as tuple of strings.
 
     Args:
         accel: Accelerator either 'LHC' (dQ[xy], dQp[xy] knobs) or
                'HLLHC' (kqt[fd], ks[fd] knobs)
         beam: Beam to use, for the knob names
+        suffix (str): suffix to add to the knobs, e.g. `_sq`
 
     Returns:
         Tuple of strings like `(qx, qy, dqx, dqy)`
@@ -357,8 +359,8 @@ def get_tune_and_chroma_knobs(accel: str, beam: int) -> Tuple[str, str, str, str
     beam = 2 if beam == 4 else beam
     try:
         return {
-            'LHC': (f'dQx.b{beam}', f'dQy.b{beam}', f'dQpx.b{beam}', f'dQpy.b{beam}'),
-            'HLLHC': (f'kqtf.b{beam}', f'kqtd.b{beam}', f'ksf.b{beam}', f'ksd.b{beam}'),
+            'LHC': (f'dQx.b{beam}{suffix}', f'dQy.b{beam}{suffix}', f'dQpx.b{beam}{suffix}', f'dQpy.b{beam}{suffix}'),
+            'HLLHC': (f'kqtf.b{beam}{suffix}', f'kqtd.b{beam}{suffix}', f'ksf.b{beam}{suffix}', f'ksd.b{beam}{suffix}'),
         }[accel.upper()]
     except KeyError:
         raise KeyError(f"Accelerator '{accel}' not recognized.")
@@ -386,7 +388,8 @@ def get_kqs_for_coupling_correction(beam: int) -> List[str]:
 def match_tune(madx: Madx, accel: str, sequence: str,
                qx: float, qy: float,
                dqx: float = None, dqy: float = None,
-               step: float = 1e-7, tolerance: float = 1e-21, calls: int = 100):
+               step: float = 1e-7, tolerance: float = 1e-21, calls: int = 100,
+               knobs_suffix: str = ""):
     """Simple tune (and chromaticity) matching.
     If both are given it matches first tune and dispersion independently and then together.
 
@@ -401,6 +404,7 @@ def match_tune(madx: Madx, accel: str, sequence: str,
         step: step size to vary knob
         tolerance: tolerance for successfull matching
         calls: number of varying calls
+        knobs_suffix: suffix to use with the knobs, e.g.`_sq`
     """
     def match(*args, **kwargs):
         madx.command.match(chrom=True)
@@ -411,7 +415,7 @@ def match_tune(madx: Madx, accel: str, sequence: str,
         madx.command.endmatch()
 
     LOG.info(f"Tune (and chroma) matching for sequence {sequence}.")
-    var_names = get_tune_and_chroma_knobs(accel, int(sequence[-1]))
+    var_names = get_tune_and_chroma_knobs(accel, int(sequence[-1]), suffix=knobs_suffix)
     match(*var_names[:2], q1=qx, q2=qy)
     if (dqx is not None) and (dqy is not None):
         match(*var_names[2:], dq1=dqx, dq2=dqy)
@@ -421,13 +425,14 @@ def match_tune(madx: Madx, accel: str, sequence: str,
 
 def closest_tune_approach(madx: Madx, accel: str, sequence: str,
                           qx: float, qy: float, dqx: float, dqy: float,
-                          step: float = 1e-7, tolerance: float = 1e-21, calls: float = 100):
+                          step: float = 1e-7, tolerance: float = 1e-21, calls: float = 100,
+                          knobs_suffix: str = ""):
     """ Tries to match the tunes to their mid-fractional tunes.
     The difference between this mid-tune and the actual matched tune is the
     closest tune approach.
     """
     beam = int(sequence[-1])
-    saved_values = get_tune_and_chroma_knob_values(madx, accel, beam)
+    saved_values = get_tune_and_chroma_knob_values(madx, accel, beam, suffix=knobs_suffix)
     mid_fraction = .5 * (fractional_tune(qx) + fractional_tune(qy))
     qxmid, qymid = int(qx) + mid_fraction, int(qy) + mid_fraction
     LOG.info("Performing closest tune approach:")
@@ -435,42 +440,28 @@ def closest_tune_approach(madx: Madx, accel: str, sequence: str,
 
     madx.command.match(chrom=True)
     madx.command.global_(sequence=sequence, q1=qxmid, q2=qymid, dq1=dqx, dq2=dqy)
-    for name in get_tune_and_chroma_knobs(accel, beam=int(sequence[-1])):
+    for name in saved_values.keys():
         madx.command.vary(name=name, step=step)
     madx.command.lmdif(calls=calls, tolerance=tolerance)
     madx.command.endmatch()
-    set_tune_and_chroma_knob_values(madx, accel, beam, **saved_values)
+    for name, value in saved_values.items():
+        madx.globals[name] = value
 
 
-def get_tune_and_chroma_knob_values(madx: Madx, accel: str, beam: int) -> dict:
+def get_tune_and_chroma_knob_values(madx: Madx, accel: str, beam: int, suffix: str = "") -> dict:
     """ Saves the current tune and dispersion knob values into list.
-    See also :func:`set_tune_and_dispersion_knob_values`
 
     Args:
         madx: Madx instance
         accel: Accelerator we are using 'LHC' or 'HLLHC' see
               :func:`get_tune_and_dispersion_knobs`
         beam: beam we are using
+        suffix (str): suffix to add to the knobs, e.g. `_sq`
 
     Returns:
         Dict of qx, qy, dqx and dqy knob values.
     """
-    return {knob: madx.globals[knob] for knob in get_tune_and_chroma_knobs(accel, beam=beam)}
-
-
-def set_tune_and_chroma_knob_values(madx: Madx, accel: str, beam: int, **kwargs):
-    """ Set the current tune and dispersion knob values from args.
-    See also :func:`get_tune_and_dispersion_knob_values`
-
-    Args:
-        madx: Madx instance
-        accel: Accelerator we are using 'LHC' or 'HLLHC' see
-              :func:`get_tune_and_dispersion_knobs`
-        beam: beam we are using
-        **kwargs: qx, qy, dqx and dqy knob values.
-    """
-    for name in get_tune_and_chroma_knobs(accel, beam=beam):
-        madx.globals[name] = kwargs[name]
+    return {knob: madx.globals[knob] for knob in get_tune_and_chroma_knobs(accel, beam=beam, suffix=suffix)}
 
 
 # Special Magnet Powering ------------------------------------------------------
@@ -499,7 +490,7 @@ def power_landau_octupoles(madx: Madx, mo_current: float, beam: int, defective_a
              f"at Energy {mvars.nrj} GeV with {mo_current} A.")
     strength = mo_current / mvars.Imax_MO * mvars.Kmax_MO / brho
     beam = 2 if beam == 4 else beam
-    for arc in _all_arcs(beam):
+    for arc in lhc_arc_names(beam):
         for fd in "FD":
             mvars[f"KO{fd}.{arc}"] = strength
 
@@ -519,7 +510,7 @@ def deactivate_arc_sextupoles(madx: Madx, beam: int):
     # Rest: Weak sextupoles in sectors 78/23/34/67
     LOG.info(f"Deactivating all arc sextupoles for beam {beam}.")
     beam = 2 if beam == 4 else beam
-    for arc in _all_arcs(beam):
+    for arc in lhc_arc_names(beam):
         for fd in 'FD':
             for i in (1, 2):
                 madx.globals[f'KS{fd}{i:d}.{arc}'] = 0.0
@@ -558,12 +549,24 @@ def auto_dtype(df):
         return df.apply(partial(pd.to_numeric, errors='ignore'))
 
 
-def _all_arcs(beam: int):
+def lhc_arcs() -> List[str]:
+    """ Strings of all LHC arcs. """
+    return [f"{i}{i%8+1}" for i in range(1, 9)]
+
+
+def lhc_arc_names(beam: int) -> List[str]:
     """ Names of all arcs for given beam. """
-    return [f'A{i+1}{(i+1)%8+1}B{beam:d}' for i in range(8)]
+    return [f'A{arc}B{beam:d}' for arc in lhc_arcs()]
 
 
-def get_k_strings(start=0, stop=8, orientation='both'):
+def get_k_strings(start: int = 0, stop: int = 8, orientation: str = 'both'):
+    """Return all K-column names for a given range.
+
+    Args:
+        start: lowest order to include. Default 0.
+        stop: highest order + 1 to include (same as in `range()`). Default 8.
+        orientation: 'S' for skew, '' for normal, 'both' for both
+    """
     if orientation == 'both':
         orientation = ('', 'S')
     elif orientation == 'skew':
@@ -572,3 +575,33 @@ def get_k_strings(start=0, stop=8, orientation='both'):
         orientation = ('',)
 
     return [f"K{i:d}{s:s}L" for i in range(start, stop) for s in orientation]
+
+
+def add_expression(madx: Madx, name: str, expression: str):
+    """ Add an expression to a variable that might already 
+    be a deferred expression. 
+
+    Args:
+        madx (Madx): Madx instance to incorporate the variable in
+        name (str): Name of the variable
+        expression (str): Expression to assign
+    """
+    try:
+        old_expression = madx.globals.cmdpar[name].expr
+    except KeyError:
+        old_expression = None
+
+    if old_expression is not None:
+        expression = f"{old_expression} + {expression}"
+    madx.globals[name] = expression
+
+
+@contextmanager
+def temp_disable_errors(madx: Madx, *args):
+    """ Disable all global variable args and restore their value afterwards."""
+    saved = {}
+    for arg in args:
+        saved[arg] = madx.globals[arg]
+        madx.globals[arg] = 0
+    yield
+    madx.globals.update(saved)
