@@ -13,7 +13,7 @@ from typing import Sequence, Union
 # from optics_functions.coupling import coupling_via_cmatrix
 import pandas as pd
 from cpymad.madx import Madx
-from cpymad_lhc.general import lhc_arcs, get_coupling_knobs, get_tfs
+from cpymad_lhc.general import lhc_arcs, get_coupling_knobs, get_tfs, add_expression
 import numpy as np
 import tfs
 
@@ -197,10 +197,10 @@ def create_coupling_knobs(madx: Madx, beam: int, accel: str, optics: Union[Path,
         mvars[coeff_name_real] = coeff_real
         mvars[coeff_name_imag] = coeff_imag
 
-        definition_str = f"{coeff_real} * {knob_name_real} + {coeff_imag} * {knob_name_imag}"
+        definition_str = f"{coeff_name_real} * {knob_name_real} + {coeff_name_imag} * {knob_name_imag}"
 
         if sector in SINGLE_KQS_LISTS[beam]:
-            mvars[f"kqs.a{sector}b{beam}"] = definition_str
+            add_expression(madx, f"kqs.a{sector}b{beam}", definition_str)
         else:
-            mvars[f"kqs.r{sector[0]}b{beam}"] = definition_str
-            mvars[f"kqs.l{sector[1]}b{beam}"] = definition_str
+            add_expression(madx, f"kqs.r{sector[0]}b{beam}", definition_str)
+            add_expression(madx, f"kqs.l{sector[1]}b{beam}", definition_str)

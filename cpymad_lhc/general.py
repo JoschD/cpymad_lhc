@@ -577,6 +577,25 @@ def get_k_strings(start: int = 0, stop: int = 8, orientation: str = 'both'):
     return [f"K{i:d}{s:s}L" for i in range(start, stop) for s in orientation]
 
 
+def add_expression(madx: Madx, name: str, expression: str):
+    """ Add an expression to a variable that might already 
+    be a deferred expression. 
+
+    Args:
+        madx (Madx): Madx instance to incorporate the variable in
+        name (str): Name of the variable
+        expression (str): Expression to assign
+    """
+    try:
+        old_expression = madx.globals.cmdpar[name].expr
+    except KeyError:
+        old_expression = None
+
+    if old_expression is not None:
+        expression = f"{old_expression} + {expression}"
+    madx.globals[name] = expression
+
+
 @contextmanager
 def temp_disable_errors(madx: Madx, *args):
     """ Disable all global variable args and restore their value afterwards."""
