@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.general &mdash; cpymad-lhc 0.0.2 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <title>cpymad_lhc.general &mdash; cpymad-lhc 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,7 +16,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -25,14 +29,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+
+          
+          
+          <a href="../../index.html">
+            
           </a>
               <div class="version">
-                0.0
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -41,11 +49,50 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.add_expression"><code class="docutils literal notranslate"><span class="pre">add_expression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.amplitude_detuning_ptc"><code class="docutils literal notranslate"><span class="pre">amplitude_detuning_ptc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.auto_dtype"><code class="docutils literal notranslate"><span class="pre">auto_dtype()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.closest_tune_approach"><code class="docutils literal notranslate"><span class="pre">closest_tune_approach()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.deactivate_arc_sextupoles"><code class="docutils literal notranslate"><span class="pre">deactivate_arc_sextupoles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.dynamic_aperture_tracking"><code class="docutils literal notranslate"><span class="pre">dynamic_aperture_tracking()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.fractional_tune"><code class="docutils literal notranslate"><span class="pre">fractional_tune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_coupling_knobs"><code class="docutils literal notranslate"><span class="pre">get_coupling_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_k_strings"><code class="docutils literal notranslate"><span class="pre">get_k_strings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_kqs_for_coupling_correction"><code class="docutils literal notranslate"><span class="pre">get_kqs_for_coupling_correction()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_lhc_sequence_filename_and_bv"><code class="docutils literal notranslate"><span class="pre">get_lhc_sequence_filename_and_bv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_tfs"><code class="docutils literal notranslate"><span class="pre">get_tfs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knob_values"><code class="docutils literal notranslate"><span class="pre">get_tune_and_chroma_knob_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knobs"><code class="docutils literal notranslate"><span class="pre">get_tune_and_chroma_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.lhc_arc_names"><code class="docutils literal notranslate"><span class="pre">lhc_arc_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.lhc_arcs"><code class="docutils literal notranslate"><span class="pre">lhc_arcs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.match_tune"><code class="docutils literal notranslate"><span class="pre">match_tune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.power_landau_octupoles"><code class="docutils literal notranslate"><span class="pre">power_landau_octupoles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.rdts_ptc"><code class="docutils literal notranslate"><span class="pre">rdts_ptc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.sixtrack_output"><code class="docutils literal notranslate"><span class="pre">sixtrack_output()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.switch_magnetic_errors"><code class="docutils literal notranslate"><span class="pre">switch_magnetic_errors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.temp_disable_errors"><code class="docutils literal notranslate"><span class="pre">temp_disable_errors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.corrector_limits.check_corrector_limits"><code class="docutils literal notranslate"><span class="pre">check_corrector_limits()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_correction.correct_coupling"><code class="docutils literal notranslate"><span class="pre">correct_coupling()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_correction.correct_coupling_with_knobs"><code class="docutils literal notranslate"><span class="pre">correct_coupling_with_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_correction.match"><code class="docutils literal notranslate"><span class="pre">match()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_knob.calculate_coupling_coefficients_per_sector"><code class="docutils literal notranslate"><span class="pre">calculate_coupling_coefficients_per_sector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_knob.create_coupling_knobs"><code class="docutils literal notranslate"><span class="pre">create_coupling_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response"><code class="docutils literal notranslate"><span class="pre">get_attribute_response()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.check_crabbing"><code class="docutils literal notranslate"><span class="pre">check_crabbing()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme"><code class="docutils literal notranslate"><span class="pre">get_current_orbit_scheme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables"><code class="docutils literal notranslate"><span class="pre">get_orbit_variables()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit"><code class="docutils literal notranslate"><span class="pre">log_orbit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx"><code class="docutils literal notranslate"><span class="pre">log_orbit_from_madx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_twiss"><code class="docutils literal notranslate"><span class="pre">log_orbit_from_twiss()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup"><code class="docutils literal notranslate"><span class="pre">orbit_setup()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.logging.MaxFilter"><code class="docutils literal notranslate"><span class="pre">MaxFilter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.logging.StreamToLogger"><code class="docutils literal notranslate"><span class="pre">StreamToLogger</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.logging.cpymad_logging_setup"><code class="docutils literal notranslate"><span class="pre">cpymad_logging_setup()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -63,9 +110,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>cpymad_lhc.general</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cpymad_lhc.general</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -83,15 +130,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">tfs</span>
-<span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Madx</span>
+<span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">Table</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -99,7 +146,7 @@
 <span class="c1"># Tfs Extraction ---------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="get_lhc_sequence_filename_and_bv"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_lhc_sequence_filename_and_bv">[docs]</a><span class="k">def</span> <span class="nf">get_lhc_sequence_filename_and_bv</span><span class="p">(</span><span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;lhc&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Return the default sequence filename, the sequence name and the bv-flag</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Return the default sequence filename, the sequence name and the bv-flag</span>
 <span class="sd">    for the given beam.</span>
 
 <span class="sd">    Args:</span>
@@ -122,7 +169,7 @@
             <span class="n">only_selected</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
             <span class="n">remove_element_numbering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the filtered content of the given `table` as TfsDataFrame.</span>
 
 <span class="sd">    Args:</span>
@@ -197,7 +244,7 @@
 
 
 <div class="viewcode-block" id="amplitude_detuning_ptc"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.amplitude_detuning_ptc">[docs]</a><span class="k">def</span> <span class="nf">amplitude_detuning_ptc</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">ampdet</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">chroma</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Calculate amplitude detuning via PTC_NORMAL</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculate amplitude detuning via PTC_NORMAL</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
@@ -272,7 +319,7 @@
 
 
 <div class="viewcode-block" id="rdts_ptc"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.rdts_ptc">[docs]</a><span class="k">def</span> <span class="nf">rdts_ptc</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Calculate the RDTs via PTC_TWISS.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculate the RDTs via PTC_TWISS.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
@@ -307,7 +354,7 @@
 <div class="viewcode-block" id="dynamic_aperture_tracking"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.dynamic_aperture_tracking">[docs]</a><span class="k">def</span> <span class="nf">dynamic_aperture_tracking</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sigmas</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">n_angles</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                               <span class="n">turns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
                               <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Perform MAD-X tracking via the DYNAP module.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform MAD-X tracking via the DYNAP module.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
@@ -375,7 +422,7 @@
 
 
 <div class="viewcode-block" id="switch_magnetic_errors"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.switch_magnetic_errors">[docs]</a><span class="k">def</span> <span class="nf">switch_magnetic_errors</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Which magnetic field orders to apply.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Which magnetic field orders to apply.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
@@ -400,12 +447,13 @@
 
 <span class="c1"># Knobs ------------------------------------------------------------------------</span>
 
-<div class="viewcode-block" id="get_coupling_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_coupling_knobs">[docs]</a><span class="k">def</span> <span class="nf">get_coupling_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Get names of knobs to change coupling as tuple of strings.</span>
+<div class="viewcode-block" id="get_coupling_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_coupling_knobs">[docs]</a><span class="k">def</span> <span class="nf">get_coupling_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get names of knobs to change coupling as tuple of strings.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        accel: Accelerator either &#39;LHC&#39;  or &#39;HLLHC&#39;</span>
 <span class="sd">        beam: Beam to use, for the (LHC) knob names</span>
+<span class="sd">        suffix (str): suffix to add to the knobs, e.g. `_sq`</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple of strings like `(real_knob, imaginary_knob)`</span>
@@ -413,20 +461,21 @@
     <span class="n">beam</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="n">beam</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;LHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cmrs.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;cmis.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;LHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cmrs.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;cmis.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
             <span class="s1">&#39;HLLHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;cmrskew&#39;</span><span class="p">,</span> <span class="s1">&#39;cmiskew&#39;</span><span class="p">),</span>
         <span class="p">}[</span><span class="n">accel</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accelerator &#39;</span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s2">&#39; not recognized.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_tune_and_chroma_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knobs">[docs]</a><span class="k">def</span> <span class="nf">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Get names of knobs to change tune and chromaticity as tuple of strings.</span>
+<div class="viewcode-block" id="get_tune_and_chroma_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knobs">[docs]</a><span class="k">def</span> <span class="nf">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get names of knobs to change tune and chromaticity as tuple of strings.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        accel: Accelerator either &#39;LHC&#39; (dQ[xy], dQp[xy] knobs) or</span>
 <span class="sd">               &#39;HLLHC&#39; (kqt[fd], ks[fd] knobs)</span>
 <span class="sd">        beam: Beam to use, for the knob names</span>
+<span class="sd">        suffix (str): suffix to add to the knobs, e.g. `_sq`</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple of strings like `(qx, qy, dqx, dqy)`</span>
@@ -434,15 +483,15 @@
     <span class="n">beam</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="n">beam</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;LHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dQx.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;dQy.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;dQpx.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;dQpy.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
-            <span class="s1">&#39;HLLHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;kqtf.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;kqtd.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;ksf.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;ksd.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;LHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;dQx.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;dQy.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;dQpx.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;dQpy.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;HLLHC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;kqtf.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;kqtd.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;ksf.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;ksd.b</span><span class="si">{</span><span class="n">beam</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">),</span>
         <span class="p">}[</span><span class="n">accel</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accelerator &#39;</span><span class="si">{</span><span class="n">accel</span><span class="si">}</span><span class="s2">&#39; not recognized.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_kqs_for_coupling_correction"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_kqs_for_coupling_correction">[docs]</a><span class="k">def</span> <span class="nf">get_kqs_for_coupling_correction</span><span class="p">(</span><span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot; Returns a list of elements for the respective beam as used for coupling correction.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns a list of elements for the respective beam as used for coupling correction.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        beam: Beam to use</span>
@@ -463,8 +512,9 @@
 <div class="viewcode-block" id="match_tune"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.match_tune">[docs]</a><span class="k">def</span> <span class="nf">match_tune</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                <span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
                <span class="n">dqx</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dqy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-               <span class="n">step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-21</span><span class="p">,</span> <span class="n">calls</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Simple tune (and chromaticity) matching.</span>
+               <span class="n">step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-21</span><span class="p">,</span> <span class="n">calls</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+               <span class="n">knobs_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple tune (and chromaticity) matching.</span>
 <span class="sd">    If both are given it matches first tune and dispersion independently and then together.</span>
 
 <span class="sd">    Args:</span>
@@ -478,6 +528,7 @@
 <span class="sd">        step: step size to vary knob</span>
 <span class="sd">        tolerance: tolerance for successfull matching</span>
 <span class="sd">        calls: number of varying calls</span>
+<span class="sd">        knobs_suffix: suffix to use with the knobs, e.g.`_sq`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -488,7 +539,7 @@
         <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">endmatch</span><span class="p">()</span>
 
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tune (and chroma) matching for sequence </span><span class="si">{</span><span class="n">sequence</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-    <span class="n">var_names</span> <span class="o">=</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">var_names</span> <span class="o">=</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">suffix</span><span class="o">=</span><span class="n">knobs_suffix</span><span class="p">)</span>
     <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="n">q1</span><span class="o">=</span><span class="n">qx</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qy</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">dqx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dqy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">match</span><span class="p">(</span><span class="o">*</span><span class="n">var_names</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span>
@@ -498,13 +549,14 @@
 
 <div class="viewcode-block" id="closest_tune_approach"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.closest_tune_approach">[docs]</a><span class="k">def</span> <span class="nf">closest_tune_approach</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                           <span class="n">qx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">qy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqx</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dqy</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-                          <span class="n">step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-21</span><span class="p">,</span> <span class="n">calls</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Tries to match the tunes to their mid-fractional tunes.</span>
+                          <span class="n">step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-21</span><span class="p">,</span> <span class="n">calls</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+                          <span class="n">knobs_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Tries to match the tunes to their mid-fractional tunes.</span>
 <span class="sd">    The difference between this mid-tune and the actual matched tune is the</span>
 <span class="sd">    closest tune approach.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">beam</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">saved_values</span> <span class="o">=</span> <span class="n">get_tune_and_chroma_knob_values</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="p">)</span>
+    <span class="n">saved_values</span> <span class="o">=</span> <span class="n">get_tune_and_chroma_knob_values</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">knobs_suffix</span><span class="p">)</span>
     <span class="n">mid_fraction</span> <span class="o">=</span> <span class="mf">.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">fractional_tune</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span> <span class="o">+</span> <span class="n">fractional_tune</span><span class="p">(</span><span class="n">qy</span><span class="p">))</span>
     <span class="n">qxmid</span><span class="p">,</span> <span class="n">qymid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">qx</span><span class="p">)</span> <span class="o">+</span> <span class="n">mid_fraction</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">qy</span><span class="p">)</span> <span class="o">+</span> <span class="n">mid_fraction</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Performing closest tune approach:&quot;</span><span class="p">)</span>
@@ -512,49 +564,35 @@
 
     <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">chrom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">global_</span><span class="p">(</span><span class="n">sequence</span><span class="o">=</span><span class="n">sequence</span><span class="p">,</span> <span class="n">q1</span><span class="o">=</span><span class="n">qxmid</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">qymid</span><span class="p">,</span> <span class="n">dq1</span><span class="o">=</span><span class="n">dqx</span><span class="p">,</span> <span class="n">dq2</span><span class="o">=</span><span class="n">dqy</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">saved_values</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">vary</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">)</span>
     <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">lmdif</span><span class="p">(</span><span class="n">calls</span><span class="o">=</span><span class="n">calls</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">)</span>
     <span class="n">madx</span><span class="o">.</span><span class="n">command</span><span class="o">.</span><span class="n">endmatch</span><span class="p">()</span>
-    <span class="n">set_tune_and_chroma_knob_values</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="p">,</span> <span class="o">**</span><span class="n">saved_values</span><span class="p">)</span></div>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">saved_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
-<div class="viewcode-block" id="get_tune_and_chroma_knob_values"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knob_values">[docs]</a><span class="k">def</span> <span class="nf">get_tune_and_chroma_knob_values</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Saves the current tune and dispersion knob values into list.</span>
-<span class="sd">    See also :func:`set_tune_and_dispersion_knob_values`</span>
+<div class="viewcode-block" id="get_tune_and_chroma_knob_values"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knob_values">[docs]</a><span class="k">def</span> <span class="nf">get_tune_and_chroma_knob_values</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Saves the current tune and dispersion knob values into list.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
 <span class="sd">        accel: Accelerator we are using &#39;LHC&#39; or &#39;HLLHC&#39; see</span>
 <span class="sd">              :func:`get_tune_and_dispersion_knobs`</span>
 <span class="sd">        beam: beam we are using</span>
+<span class="sd">        suffix (str): suffix to add to the knobs, e.g. `_sq`</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Dict of qx, qy, dqx and dqy knob values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">{</span><span class="n">knob</span><span class="p">:</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">)}</span></div>
-
-
-<div class="viewcode-block" id="set_tune_and_chroma_knob_values"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.set_tune_and_chroma_knob_values">[docs]</a><span class="k">def</span> <span class="nf">set_tune_and_chroma_knob_values</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Set the current tune and dispersion knob values from args.</span>
-<span class="sd">    See also :func:`get_tune_and_dispersion_knob_values`</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        madx: Madx instance</span>
-<span class="sd">        accel: Accelerator we are using &#39;LHC&#39; or &#39;HLLHC&#39; see</span>
-<span class="sd">              :func:`get_tune_and_dispersion_knobs`</span>
-<span class="sd">        beam: beam we are using</span>
-<span class="sd">        **kwargs: qx, qy, dqx and dqy knob values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">):</span>
-        <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="p">{</span><span class="n">knob</span><span class="p">:</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">knob</span><span class="p">]</span> <span class="k">for</span> <span class="n">knob</span> <span class="ow">in</span> <span class="n">get_tune_and_chroma_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="o">=</span><span class="n">beam</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)}</span></div>
 
 
 <span class="c1"># Special Magnet Powering ------------------------------------------------------</span>
 
 
 <div class="viewcode-block" id="power_landau_octupoles"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.power_landau_octupoles">[docs]</a><span class="k">def</span> <span class="nf">power_landau_octupoles</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">mo_current</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">defective_arc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Power the landau octupoles.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Power the landau octupoles.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
@@ -576,7 +614,7 @@
              <span class="sa">f</span><span class="s2">&quot;at Energy </span><span class="si">{</span><span class="n">mvars</span><span class="o">.</span><span class="n">nrj</span><span class="si">}</span><span class="s2"> GeV with </span><span class="si">{</span><span class="n">mo_current</span><span class="si">}</span><span class="s2"> A.&quot;</span><span class="p">)</span>
     <span class="n">strength</span> <span class="o">=</span> <span class="n">mo_current</span> <span class="o">/</span> <span class="n">mvars</span><span class="o">.</span><span class="n">Imax_MO</span> <span class="o">*</span> <span class="n">mvars</span><span class="o">.</span><span class="n">Kmax_MO</span> <span class="o">/</span> <span class="n">brho</span>
     <span class="n">beam</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="n">beam</span>
-    <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">_all_arcs</span><span class="p">(</span><span class="n">beam</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">lhc_arc_names</span><span class="p">(</span><span class="n">beam</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="s2">&quot;FD&quot;</span><span class="p">:</span>
             <span class="n">mvars</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;KO</span><span class="si">{</span><span class="n">fd</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">arc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">strength</span>
 
@@ -585,7 +623,7 @@
 
 
 <div class="viewcode-block" id="deactivate_arc_sextupoles"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.deactivate_arc_sextupoles">[docs]</a><span class="k">def</span> <span class="nf">deactivate_arc_sextupoles</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Deactivates all arc sextupoles.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Deactivates all arc sextupoles.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        madx: Madx instance</span>
@@ -596,7 +634,7 @@
     <span class="c1"># Rest: Weak sextupoles in sectors 78/23/34/67</span>
     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deactivating all arc sextupoles for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
     <span class="n">beam</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span> <span class="k">else</span> <span class="n">beam</span>
-    <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">_all_arcs</span><span class="p">(</span><span class="n">beam</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">lhc_arc_names</span><span class="p">(</span><span class="n">beam</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="s1">&#39;FD&#39;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
                 <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;KS</span><span class="si">{</span><span class="n">fd</span><span class="si">}{</span><span class="n">i</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">arc</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span></div>
@@ -605,7 +643,7 @@
 <span class="c1"># Helper -----------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="sixtrack_output"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.sixtrack_output">[docs]</a><span class="k">def</span> <span class="nf">sixtrack_output</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Prepare output for sixtrack run. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Prepare output for sixtrack run. &quot;&quot;&quot;</span>
     <span class="c1"># Activate RF-Cavities</span>
     <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="s2">&quot;VRF400&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span> <span class="k">if</span> <span class="n">energy</span> <span class="o">&lt;</span> <span class="mi">5000</span> <span class="k">else</span> <span class="mi">16</span>
     <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="s2">&quot;LAGRF400.B1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
@@ -621,12 +659,12 @@
 
 
 <div class="viewcode-block" id="fractional_tune"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.fractional_tune">[docs]</a><span class="k">def</span> <span class="nf">fractional_tune</span><span class="p">(</span><span class="n">tune</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns the fractional tune.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns the fractional tune.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">tune</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">tune</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="auto_dtype"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.auto_dtype">[docs]</a><span class="k">def</span> <span class="nf">auto_dtype</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Set DataFrame dtypes automatically.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Set DataFrame dtypes automatically.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># pandas &gt;= 1.0 functionality with convert_dtypes</span>
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">()</span>
@@ -635,12 +673,24 @@
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">))</span></div>
 
 
-<span class="k">def</span> <span class="nf">_all_arcs</span><span class="p">(</span><span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Names of all arcs for given beam. &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;A</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}{</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">8</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">B</span><span class="si">{</span><span class="n">beam</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+<div class="viewcode-block" id="lhc_arcs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.lhc_arcs">[docs]</a><span class="k">def</span> <span class="nf">lhc_arcs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Strings of all LHC arcs. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}{</span><span class="n">i</span><span class="o">%</span><span class="mi">8</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span></div>
 
 
-<span class="k">def</span> <span class="nf">get_k_strings</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="lhc_arc_names"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.lhc_arc_names">[docs]</a><span class="k">def</span> <span class="nf">lhc_arc_names</span><span class="p">(</span><span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Names of all arcs for given beam. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;A</span><span class="si">{</span><span class="n">arc</span><span class="si">}</span><span class="s1">B</span><span class="si">{</span><span class="n">beam</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">arc</span> <span class="ow">in</span> <span class="n">lhc_arcs</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="get_k_strings"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.get_k_strings">[docs]</a><span class="k">def</span> <span class="nf">get_k_strings</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all K-column names for a given range.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        start: lowest order to include. Default 0.</span>
+<span class="sd">        stop: highest order + 1 to include (same as in `range()`). Default 8.</span>
+<span class="sd">        orientation: &#39;S&#39; for skew, &#39;&#39; for normal, &#39;both&#39; for both</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span><span class="p">:</span>
         <span class="n">orientation</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">orientation</span> <span class="o">==</span> <span class="s1">&#39;skew&#39;</span><span class="p">:</span>
@@ -648,7 +698,37 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">orientation</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,)</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;K</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">d</span><span class="si">}{</span><span class="n">s</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">L&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">orientation</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;K</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">d</span><span class="si">}{</span><span class="n">s</span><span class="si">:</span><span class="s2">s</span><span class="si">}</span><span class="s2">L&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">orientation</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="add_expression"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.add_expression">[docs]</a><span class="k">def</span> <span class="nf">add_expression</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expression</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Add an expression to a variable that might already </span>
+<span class="sd">    be a deferred expression. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        madx (Madx): Madx instance to incorporate the variable in</span>
+<span class="sd">        name (str): Name of the variable</span>
+<span class="sd">        expression (str): Expression to assign</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">old_expression</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">cmdpar</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">expr</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">old_expression</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">old_expression</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">expression</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old_expression</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">expression</span></div>
+
+
+<div class="viewcode-block" id="temp_disable_errors"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.general.temp_disable_errors">[docs]</a><span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">temp_disable_errors</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Disable all global variable args and restore their value afterwards.&quot;&quot;&quot;</span>
+    <span class="n">saved</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">saved</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">yield</span>
+    <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">saved</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

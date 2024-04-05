@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.coupling_knob &mdash; cpymad-lhc 0.0.2 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <title>cpymad_lhc.coupling_knob &mdash; cpymad-lhc 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -14,7 +16,9 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -25,14 +29,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> cpymad-lhc
+
+          
+          
+          <a href="../../index.html">
+            
           </a>
               <div class="version">
-                0.0
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -41,11 +49,50 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.add_expression"><code class="docutils literal notranslate"><span class="pre">add_expression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.amplitude_detuning_ptc"><code class="docutils literal notranslate"><span class="pre">amplitude_detuning_ptc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.auto_dtype"><code class="docutils literal notranslate"><span class="pre">auto_dtype()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.closest_tune_approach"><code class="docutils literal notranslate"><span class="pre">closest_tune_approach()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.deactivate_arc_sextupoles"><code class="docutils literal notranslate"><span class="pre">deactivate_arc_sextupoles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.dynamic_aperture_tracking"><code class="docutils literal notranslate"><span class="pre">dynamic_aperture_tracking()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.fractional_tune"><code class="docutils literal notranslate"><span class="pre">fractional_tune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_coupling_knobs"><code class="docutils literal notranslate"><span class="pre">get_coupling_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_k_strings"><code class="docutils literal notranslate"><span class="pre">get_k_strings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_kqs_for_coupling_correction"><code class="docutils literal notranslate"><span class="pre">get_kqs_for_coupling_correction()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_lhc_sequence_filename_and_bv"><code class="docutils literal notranslate"><span class="pre">get_lhc_sequence_filename_and_bv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_tfs"><code class="docutils literal notranslate"><span class="pre">get_tfs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knob_values"><code class="docutils literal notranslate"><span class="pre">get_tune_and_chroma_knob_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knobs"><code class="docutils literal notranslate"><span class="pre">get_tune_and_chroma_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.lhc_arc_names"><code class="docutils literal notranslate"><span class="pre">lhc_arc_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.lhc_arcs"><code class="docutils literal notranslate"><span class="pre">lhc_arcs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.match_tune"><code class="docutils literal notranslate"><span class="pre">match_tune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.power_landau_octupoles"><code class="docutils literal notranslate"><span class="pre">power_landau_octupoles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.rdts_ptc"><code class="docutils literal notranslate"><span class="pre">rdts_ptc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.sixtrack_output"><code class="docutils literal notranslate"><span class="pre">sixtrack_output()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.switch_magnetic_errors"><code class="docutils literal notranslate"><span class="pre">switch_magnetic_errors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.temp_disable_errors"><code class="docutils literal notranslate"><span class="pre">temp_disable_errors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.corrector_limits.check_corrector_limits"><code class="docutils literal notranslate"><span class="pre">check_corrector_limits()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_correction.correct_coupling"><code class="docutils literal notranslate"><span class="pre">correct_coupling()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_correction.correct_coupling_with_knobs"><code class="docutils literal notranslate"><span class="pre">correct_coupling_with_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_correction.match"><code class="docutils literal notranslate"><span class="pre">match()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_knob.calculate_coupling_coefficients_per_sector"><code class="docutils literal notranslate"><span class="pre">calculate_coupling_coefficients_per_sector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_knob.create_coupling_knobs"><code class="docutils literal notranslate"><span class="pre">create_coupling_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response"><code class="docutils literal notranslate"><span class="pre">get_attribute_response()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.check_crabbing"><code class="docutils literal notranslate"><span class="pre">check_crabbing()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme"><code class="docutils literal notranslate"><span class="pre">get_current_orbit_scheme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables"><code class="docutils literal notranslate"><span class="pre">get_orbit_variables()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit"><code class="docutils literal notranslate"><span class="pre">log_orbit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx"><code class="docutils literal notranslate"><span class="pre">log_orbit_from_madx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_twiss"><code class="docutils literal notranslate"><span class="pre">log_orbit_from_twiss()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup"><code class="docutils literal notranslate"><span class="pre">orbit_setup()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.logging.MaxFilter"><code class="docutils literal notranslate"><span class="pre">MaxFilter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.logging.StreamToLogger"><code class="docutils literal notranslate"><span class="pre">StreamToLogger</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.logging.cpymad_logging_setup"><code class="docutils literal notranslate"><span class="pre">cpymad_logging_setup()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -63,9 +110,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>cpymad_lhc.coupling_knob</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cpymad_lhc.coupling_knob</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -84,12 +131,15 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="c1"># from optics_functions.coupling import coupling_via_cmatrix</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">cpymad.madx</span> <span class="kn">import</span> <span class="n">Madx</span>
+<span class="kn">from</span> <span class="nn">cpymad_lhc.general</span> <span class="kn">import</span> <span class="n">lhc_arcs</span><span class="p">,</span> <span class="n">get_coupling_knobs</span><span class="p">,</span> <span class="n">get_tfs</span><span class="p">,</span> <span class="n">add_expression</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tfs</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -112,7 +162,7 @@
 
 
 <div class="viewcode-block" id="get_attribute_response"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_response</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Creates the linear response matrix of the given `variables` for the desired `attributed`. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Creates the linear response matrix of the given `variables` for the desired `attributed`. &quot;&quot;&quot;</span>
     <span class="c1"># find elements in sequence that have the attribute defined</span>
     <span class="n">valid_elements</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">sequence</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span> <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">e</span><span class="p">}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_elements</span><span class="p">):</span>
@@ -140,6 +190,144 @@
     <span class="c1"># drop all-zero rows</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="c1"># Old-School Coupling Knobs -------------------</span>
+<span class="n">SINGLE_KQS_LISTS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="c1"># Sectors with commonly powered MQSs</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;23&#39;</span><span class="p">,</span> <span class="s1">&#39;45&#39;</span><span class="p">,</span> <span class="s1">&#39;67&#39;</span><span class="p">,</span> <span class="s1">&#39;81&#39;</span><span class="p">],</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;34&#39;</span><span class="p">,</span> <span class="s1">&#39;56&#39;</span><span class="p">,</span> <span class="s1">&#39;78&#39;</span><span class="p">],</span> 
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="calculate_coupling_coefficients_per_sector"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.calculate_coupling_coefficients_per_sector">[docs]</a><span class="k">def</span> <span class="nf">calculate_coupling_coefficients_per_sector</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> 
+        <span class="n">deactivate_sectors</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;45&#39;</span><span class="p">,</span> <span class="s1">&#39;56&#39;</span><span class="p">,</span> <span class="s1">&#39;81&#39;</span><span class="p">)</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculate the coupling knob coefficients as in corr_MB_ats_v4.</span>
+<span class="sd">    This is basically Eq. (59) in https://cds.cern.ch/record/522049/files/lhc-project-report-501.pdf ,</span>
+<span class="sd">    with cosine for the real part and sine for the imaginary part.</span>
+<span class="sd">    What is happening here is, that we are building a matrix for the equation-system</span>
+<span class="sd">    M * [MQS12,..., MQS81] = -[RE, IM]</span>
+<span class="sd">    where RE and IM are the real and imaginary parts of the coupling coefficients, </span>
+<span class="sd">    and therefore the knobs we want to create.</span>
+<span class="sd">    MQS12 - MQS81 is the total powering of the MQS per arc, which we steer with </span>
+<span class="sd">    the knob. All MQS in a single arc are assumed to be powered equally.</span>
+<span class="sd">    After building the matrix, we &quot;solve&quot; the equation system via pseudo-inverese M+</span>
+<span class="sd">    and get therefore the definition of the coupling knob.</span>
+<span class="sd">    [MQS12,..., MQS81] = - M+ * [RE, IM]</span>
+<span class="sd">    HINT: The MINN function in corr_MB_ats_v4 is simply the calculation the pseudo-inverse:</span>
+<span class="sd">    M+  = M&#39; (M * M&#39;)^-1  (&#39; = transpose, ^-1 = inverse)</span>
+<span class="sd">    including the minus on the rhs of the equation.</span>
+<span class="sd">    TODO:</span>
+<span class="sd">        - Get beta and phases from the beamline directly (instead of the TFS dataframe)</span>
+<span class="sd">        - Make the number of MQS more flexible, could maybe be parsed from the beamline</span>
+<span class="sd">        - Why is there an absolute value in Eq. (59) but not in the code? (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)</span>
+<span class="sd">        - Add a2 correction to the KQS definition (as in corr_MB_ats_v4)</span>
+<span class="sd">        - Include the actual fractional tune split of the current machine (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)</span>
+<span class="sd">        - Calculate also the contribution to f_1010 and try to set to zero</span>
+<span class="sd">        - Does this still work when slicing the MQS?</span>
+<span class="sd">    Args:</span>
+<span class="sd">        df (tfs.TfsDataFrame): </span>
+<span class="sd">            Dataframe containing the optics of the machine. </span>
+<span class="sd">        deactivate_sectors (Sequence[str], optional): </span>
+<span class="sd">            Deactivate these sectors, i.e. don&#39;t use their MQS. </span>
+<span class="sd">            Defaults to (&#39;12&#39;, &#39;45&#39;, &#39;56&#39;, &#39;81&#39;), the ATS sectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BETX</span><span class="p">,</span> <span class="n">BETY</span><span class="p">,</span> <span class="n">MUX</span><span class="p">,</span> <span class="n">MUY</span> <span class="o">=</span> <span class="s2">&quot;BETX&quot;</span><span class="p">,</span> <span class="s2">&quot;BETY&quot;</span><span class="p">,</span> <span class="s2">&quot;MUX&quot;</span><span class="p">,</span> <span class="s2">&quot;MUY&quot;</span>
+    <span class="n">MQS_PER_SECTOR</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># TODO: get from line (?)</span>
+    <span class="n">LENGTH_MQS</span> <span class="o">=</span> <span class="mf">0.32</span>  <span class="c1"># TODO: get from l.mqs</span>
+
+    <span class="n">sectors</span> <span class="o">=</span> <span class="n">lhc_arcs</span><span class="p">()</span>
+
+    <span class="n">mqs_sectors</span> <span class="o">=</span> <span class="p">[</span><span class="sa">fr</span><span class="s2">&quot;MQS\..*(R</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">|L</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)\.B&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sectors</span><span class="p">]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sectors</span><span class="p">)])</span>
+
+    <span class="k">for</span> <span class="n">idx_sector</span><span class="p">,</span> <span class="n">mqs_regex</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mqs_sectors</span><span class="p">):</span>
+        <span class="n">sector_mqs_slices</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">mqs_regex</span><span class="p">)</span>
+        <span class="n">df_mqs</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sector_mqs_slices</span><span class="p">]</span>
+
+        <span class="n">contribution_per_slice</span> <span class="o">=</span> <span class="n">MQS_PER_SECTOR</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_mqs</span><span class="p">)</span>  <span class="c1"># Knobs are not automatically normalized on slicing?</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="n">contribution_per_slice</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">df_mqs</span><span class="p">[</span><span class="n">BETX</span><span class="p">]</span> <span class="o">*</span> <span class="n">df_mqs</span><span class="p">[</span><span class="n">BETY</span><span class="p">])</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">df_mqs</span><span class="p">[</span><span class="n">MUX</span><span class="p">]</span> <span class="o">-</span> <span class="n">df_mqs</span><span class="p">[</span><span class="n">MUY</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">fun</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">)):</span>
+            <span class="n">m</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx_sector</span><span class="p">]</span> <span class="o">=</span>  <span class="p">(</span><span class="n">coeff</span> <span class="o">*</span> <span class="n">fun</span><span class="p">(</span><span class="n">phase</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> 
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">LENGTH_MQS</span>  <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>  <span class="c1"># kqs knobs are multiplied by the length of the MQS</span>
+
+    <span class="k">if</span> <span class="n">deactivate_sectors</span><span class="p">:</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="ow">in</span> <span class="n">deactivate_sectors</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sectors</span><span class="p">]</span>
+        <span class="n">m</span><span class="p">[:</span> <span class="p">,</span> <span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">m</span><span class="p">),</span>
+        <span class="n">index</span><span class="o">=</span><span class="n">sectors</span><span class="p">,</span> 
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;re&quot;</span><span class="p">,</span> <span class="s2">&quot;im&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># remove numerical noise:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1e-15</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="create_coupling_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.create_coupling_knobs">[docs]</a><span class="k">def</span> <span class="nf">create_coupling_knobs</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Create coupling knobs in the beam-line.</span>
+<span class="sd">    WARNING: This function will not take a2 errors into account! </span>
+<span class="sd">    Normally, the a2 errors are also corrected with the MQS, but in this function </span>
+<span class="sd">    the MQS powering is fully controlled by the coupling knobs. </span>
+<span class="sd">    See also the todo&#39;s in :func:`xmask.lhc.knob_manipulations.calculate_coupling_coefficients_per_sector`</span>
+<span class="sd">    Args:</span>
+<span class="sd">        madx (Madx): Madx instance to incorporate the knobs in</span>
+<span class="sd">        beam (int): Beam number.</span>
+<span class="sd">        optics (Path, tfs.TfsDataFrame, optional): </span>
+<span class="sd">            Path or TfsDataFrame of the twiss containing the optics to be used. </span>
+<span class="sd">            If not given, a twiss will be computed. Defaults to None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating Coupling Knobs for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2"> ---&quot;</span><span class="p">)</span>
+    <span class="n">mvars</span> <span class="o">=</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span>
+
+    <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">beam</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># same behaviour in this case</span>
+
+    <span class="n">beam_sign</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">beam</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+
+
+    <span class="k">if</span> <span class="n">optics</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">madx</span><span class="o">.</span><span class="n">twiss</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">get_tfs</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">twiss</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">optics</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">optics</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;NAME&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">optics</span>
+
+    <span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;SEQUENCE&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">beam</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Wrong optics file for beam </span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">beam_sign</span> <span class="o">*</span> <span class="n">calculate_coupling_coefficients_per_sector</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">knob_name_real</span><span class="p">,</span> <span class="n">knob_name_imag</span> <span class="o">=</span> <span class="n">get_coupling_knobs</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">beam</span><span class="p">)</span>
+
+    <span class="n">mvars</span><span class="p">[</span><span class="n">knob_name_real</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">mvars</span><span class="p">[</span><span class="n">knob_name_imag</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">sector</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">coeff_real</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sector</span><span class="p">,</span> <span class="s2">&quot;re&quot;</span><span class="p">]</span>
+        <span class="n">coeff_imag</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sector</span><span class="p">,</span> <span class="s2">&quot;im&quot;</span><span class="p">]</span>
+
+        <span class="n">coeff_name_real</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;coeff_skew_re_arc</span><span class="si">{</span><span class="n">sector</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">coeff_name_imag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;coeff_skew_im_arc</span><span class="si">{</span><span class="n">sector</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">mvars</span><span class="p">[</span><span class="n">coeff_name_real</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff_real</span>
+        <span class="n">mvars</span><span class="p">[</span><span class="n">coeff_name_imag</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeff_imag</span>
+
+        <span class="n">definition_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff_name_real</span><span class="si">}</span><span class="s2"> * </span><span class="si">{</span><span class="n">knob_name_real</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">coeff_name_imag</span><span class="si">}</span><span class="s2"> * </span><span class="si">{</span><span class="n">knob_name_imag</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="n">sector</span> <span class="ow">in</span> <span class="n">SINGLE_KQS_LISTS</span><span class="p">[</span><span class="n">beam</span><span class="p">]:</span>
+            <span class="n">add_expression</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;kqs.a</span><span class="si">{</span><span class="n">sector</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">definition_str</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">add_expression</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;kqs.r</span><span class="si">{</span><span class="n">sector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">definition_str</span><span class="p">)</span>
+            <span class="n">add_expression</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;kqs.l</span><span class="si">{</span><span class="n">sector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">definition_str</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

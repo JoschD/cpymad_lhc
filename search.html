@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search &mdash; cpymad-lhc 0.0.2 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+  <title>Search &mdash; cpymad-lhc 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+
+  
     
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -15,7 +17,9 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <script src="_static/searchtools.js"></script>
     <script src="_static/language_data.js"></script>
@@ -28,14 +32,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> cpymad-lhc
+
+          
+          
+          <a href="index.html">
+            
           </a>
               <div class="version">
-                0.0
+                0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="#" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -44,11 +52,50 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.add_expression"><code class="docutils literal notranslate"><span class="pre">add_expression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.amplitude_detuning_ptc"><code class="docutils literal notranslate"><span class="pre">amplitude_detuning_ptc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.auto_dtype"><code class="docutils literal notranslate"><span class="pre">auto_dtype()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.closest_tune_approach"><code class="docutils literal notranslate"><span class="pre">closest_tune_approach()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.deactivate_arc_sextupoles"><code class="docutils literal notranslate"><span class="pre">deactivate_arc_sextupoles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.dynamic_aperture_tracking"><code class="docutils literal notranslate"><span class="pre">dynamic_aperture_tracking()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.fractional_tune"><code class="docutils literal notranslate"><span class="pre">fractional_tune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_coupling_knobs"><code class="docutils literal notranslate"><span class="pre">get_coupling_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_k_strings"><code class="docutils literal notranslate"><span class="pre">get_k_strings()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_kqs_for_coupling_correction"><code class="docutils literal notranslate"><span class="pre">get_kqs_for_coupling_correction()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_lhc_sequence_filename_and_bv"><code class="docutils literal notranslate"><span class="pre">get_lhc_sequence_filename_and_bv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_tfs"><code class="docutils literal notranslate"><span class="pre">get_tfs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knob_values"><code class="docutils literal notranslate"><span class="pre">get_tune_and_chroma_knob_values()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.get_tune_and_chroma_knobs"><code class="docutils literal notranslate"><span class="pre">get_tune_and_chroma_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.lhc_arc_names"><code class="docutils literal notranslate"><span class="pre">lhc_arc_names()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.lhc_arcs"><code class="docutils literal notranslate"><span class="pre">lhc_arcs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.match_tune"><code class="docutils literal notranslate"><span class="pre">match_tune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.power_landau_octupoles"><code class="docutils literal notranslate"><span class="pre">power_landau_octupoles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.rdts_ptc"><code class="docutils literal notranslate"><span class="pre">rdts_ptc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.sixtrack_output"><code class="docutils literal notranslate"><span class="pre">sixtrack_output()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.switch_magnetic_errors"><code class="docutils literal notranslate"><span class="pre">switch_magnetic_errors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.general.temp_disable_errors"><code class="docutils literal notranslate"><span class="pre">temp_disable_errors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#corrector-limits">Corrector Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.corrector_limits.check_corrector_limits"><code class="docutils literal notranslate"><span class="pre">check_corrector_limits()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#coupling-correction">Coupling Correction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.coupling_correction.correct_coupling"><code class="docutils literal notranslate"><span class="pre">correct_coupling()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.coupling_correction.correct_coupling_with_knobs"><code class="docutils literal notranslate"><span class="pre">correct_coupling_with_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.coupling_correction.match"><code class="docutils literal notranslate"><span class="pre">match()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#coupling-knob">Coupling Knob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.coupling_knob.calculate_coupling_coefficients_per_sector"><code class="docutils literal notranslate"><span class="pre">calculate_coupling_coefficients_per_sector()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.coupling_knob.create_coupling_knobs"><code class="docutils literal notranslate"><span class="pre">create_coupling_knobs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response"><code class="docutils literal notranslate"><span class="pre">get_attribute_response()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#ir-orbit">IR Orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.check_crabbing"><code class="docutils literal notranslate"><span class="pre">check_crabbing()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme"><code class="docutils literal notranslate"><span class="pre">get_current_orbit_scheme()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables"><code class="docutils literal notranslate"><span class="pre">get_orbit_variables()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.log_orbit"><code class="docutils literal notranslate"><span class="pre">log_orbit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx"><code class="docutils literal notranslate"><span class="pre">log_orbit_from_madx()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_twiss"><code class="docutils literal notranslate"><span class="pre">log_orbit_from_twiss()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.ir_orbit.orbit_setup"><code class="docutils literal notranslate"><span class="pre">orbit_setup()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#logging">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.logging.MaxFilter"><code class="docutils literal notranslate"><span class="pre">MaxFilter</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.logging.StreamToLogger"><code class="docutils literal notranslate"><span class="pre">StreamToLogger</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#cpymad_lhc.logging.cpymad_logging_setup"><code class="docutils literal notranslate"><span class="pre">cpymad_logging_setup()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -66,8 +113,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Search</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Search</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
