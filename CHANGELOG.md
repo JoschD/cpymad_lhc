@@ -1,5 +1,14 @@
 # Changelog
 
+## 2024-11-08 Version 0.2.0
+
+- Added:
+  - Path Container
+
+- Changed (internal):
+  - Updated Workflows
+  - Switched to `pyproject.toml`
+
 
 ## 2024-04-05 Version 0.1.0
 

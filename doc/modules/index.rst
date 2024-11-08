@@ -5,6 +5,10 @@ Modules
     :members:
 
 
+.. automodule:: cpymad_lhc.io
+    :members:
+
+
 .. automodule:: cpymad_lhc.corrector_limits
     :members:
 

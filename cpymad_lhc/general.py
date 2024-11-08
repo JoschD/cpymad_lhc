@@ -35,7 +35,7 @@ def get_lhc_sequence_filename_and_bv(beam: int, accel: str = 'lhc'):
     bv_flag = -1 if beam == 2 else 1
     if beam == 4:
         seq_file = f"lhcb4{as_built}.seq"
-        seq_name = f"lhcb2"
+        seq_name = "lhcb2"
     return seq_name, seq_file, bv_flag
 
 
