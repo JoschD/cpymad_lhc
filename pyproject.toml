@@ -1,0 +1,83 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "cpymad_lhc/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/doc",
+  "/tests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["cpymad_lhc"]
+
+[project]
+name = "cpymad-lhc"
+readme = "README.md"
+description = "Helper functions to run LHC optics in cpymad."
+authors = [
+    {name = "JoschD", email = "JoschD@github.com"},  # see zenodo file / commits for details
+]
+license = "MIT"
+dynamic = ["version"]
+requires-python = ">=3.9"
+
+keywords = [
+  "cpymad",
+  "lhc",
+  "hllhc",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+dependencies = [
+  "cpymad>=1.9.0",
+  "numpy>=1.19.0",
+  "pandas>=1.3",
+  "tfs-pandas>=3.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest >= 7.0",
+  "pytest-cov >= 2.9",
+]
+doc = [
+  "sphinx >= 7.0",
+  "sphinx_rtd_theme >= 2.0",
+]
+
+all = [
+    "cpymad_lhc[test]",
+    "cpymad_lhc[doc]",
+]
+
+[project.urls]
+homepage = "https://github.com/JoschD/cpymad_lhc"
+repository = "https://github.com/JoschD/cpymad_lhc"
+documentation = "https://JoschD.github.io/cpymad_lhc/ "
+changelog = "https://github.com/JoschD/cpymad_lhc/blob/master/CHANGELOG.md"
+
+
+[tool.ruff]
+
+# Assume Python 3.9+
+target-version = "py39"

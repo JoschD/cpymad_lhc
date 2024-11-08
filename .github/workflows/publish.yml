@@ -16,31 +16,17 @@ jobs:
     strategy:
       matrix:  # only lowest supported Python on ubuntu-latest
         os: [ubuntu-latest]
-        python-version: [3.7]
-
+        python-version: [3.12]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Get full Python version
-        id: full-python-version
-        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
-
-      - name: Set up cache
-        uses: actions/cache@v2
-        id: cache
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.full-python-version.outputs.version }}
-
-      - name: Ensure cache is healthy
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: pip --version >/dev/null 2>&1 || rm -rf .venv
+          cache: 'pip'
+          cache-dependency-path: '**/pyproject.toml'
 
       - name: Upgrade pip, setuptools and wheel
         run: |
@@ -58,6 +44,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          python -m build
-          twine check dist/*
           twine upload dist/*
