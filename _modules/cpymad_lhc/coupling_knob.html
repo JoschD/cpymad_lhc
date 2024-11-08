@@ -1,24 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.coupling_knob &mdash; cpymad-lhc 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+  <title>cpymad_lhc.coupling_knob &mdash; cpymad-lhc 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=988d0652" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -35,9 +32,6 @@
           <a href="../../index.html">
             
           </a>
-              <div class="version">
-                0.1
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -71,6 +65,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.sixtrack_output"><code class="docutils literal notranslate"><span class="pre">sixtrack_output()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.switch_magnetic_errors"><code class="docutils literal notranslate"><span class="pre">switch_magnetic_errors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.temp_disable_errors"><code class="docutils literal notranslate"><span class="pre">temp_disable_errors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#input-output-tools">Input/Output Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.io.PathContainer"><code class="docutils literal notranslate"><span class="pre">PathContainer</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.corrector_limits.check_corrector_limits"><code class="docutils literal notranslate"><span class="pre">check_corrector_limits()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
@@ -161,7 +157,9 @@
         <span class="n">attribute</span> <span class="o">=</span> <span class="n">new_attribute</span>
 
 
-<div class="viewcode-block" id="get_attribute_response"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response">[docs]</a><span class="k">def</span> <span class="nf">get_attribute_response</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="get_attribute_response">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.get_attribute_response">[docs]</a>
+<span class="k">def</span> <span class="nf">get_attribute_response</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">variables</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Creates the linear response matrix of the given `variables` for the desired `attributed`. &quot;&quot;&quot;</span>
     <span class="c1"># find elements in sequence that have the attribute defined</span>
     <span class="n">valid_elements</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">madx</span><span class="o">.</span><span class="n">sequence</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span> <span class="k">if</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">e</span><span class="p">}</span>
@@ -192,6 +190,7 @@
     <span class="k">return</span> <span class="n">df</span></div>
 
 
+
 <span class="c1"># Old-School Coupling Knobs -------------------</span>
 <span class="n">SINGLE_KQS_LISTS</span> <span class="o">=</span> <span class="p">{</span>
 <span class="c1"># Sectors with commonly powered MQSs</span>
@@ -200,7 +199,9 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="calculate_coupling_coefficients_per_sector"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.calculate_coupling_coefficients_per_sector">[docs]</a><span class="k">def</span> <span class="nf">calculate_coupling_coefficients_per_sector</span><span class="p">(</span>
+<div class="viewcode-block" id="calculate_coupling_coefficients_per_sector">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.calculate_coupling_coefficients_per_sector">[docs]</a>
+<span class="k">def</span> <span class="nf">calculate_coupling_coefficients_per_sector</span><span class="p">(</span>
         <span class="n">df</span><span class="p">:</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">,</span> 
         <span class="n">deactivate_sectors</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;12&#39;</span><span class="p">,</span> <span class="s1">&#39;45&#39;</span><span class="p">,</span> <span class="s1">&#39;56&#39;</span><span class="p">,</span> <span class="s1">&#39;81&#39;</span><span class="p">)</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">:</span>
@@ -272,7 +273,10 @@
     <span class="k">return</span> <span class="n">result</span></div>
 
 
-<div class="viewcode-block" id="create_coupling_knobs"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.create_coupling_knobs">[docs]</a><span class="k">def</span> <span class="nf">create_coupling_knobs</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="create_coupling_knobs">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.coupling_knob.create_coupling_knobs">[docs]</a>
+<span class="k">def</span> <span class="nf">create_coupling_knobs</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">beam</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Create coupling knobs in the beam-line.</span>
 <span class="sd">    WARNING: This function will not take a2 errors into account! </span>
 <span class="sd">    Normally, the a2 errors are also corrected with the MQS, but in this function </span>
@@ -328,6 +332,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">add_expression</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;kqs.r</span><span class="si">{</span><span class="n">sector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">definition_str</span><span class="p">)</span>
             <span class="n">add_expression</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;kqs.l</span><span class="si">{</span><span class="n">sector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">b</span><span class="si">{</span><span class="n">beam</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">definition_str</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

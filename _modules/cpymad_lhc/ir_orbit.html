@@ -1,24 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>cpymad_lhc.ir_orbit &mdash; cpymad-lhc 0.1.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
+  <title>cpymad_lhc.ir_orbit &mdash; cpymad-lhc 0.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=988d0652" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=938c9ccc"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -35,9 +32,6 @@
           <a href="../../index.html">
             
           </a>
-              <div class="version">
-                0.1
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -71,6 +65,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.sixtrack_output"><code class="docutils literal notranslate"><span class="pre">sixtrack_output()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.switch_magnetic_errors"><code class="docutils literal notranslate"><span class="pre">switch_magnetic_errors()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.general.temp_disable_errors"><code class="docutils literal notranslate"><span class="pre">temp_disable_errors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#input-output-tools">Input/Output Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.io.PathContainer"><code class="docutils literal notranslate"><span class="pre">PathContainer</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#corrector-limits">Corrector Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#cpymad_lhc.corrector_limits.check_corrector_limits"><code class="docutils literal notranslate"><span class="pre">check_corrector_limits()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#coupling-correction">Coupling Correction</a></li>
@@ -227,7 +223,9 @@
     <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown crossing scheme: </span><span class="si">{</span><span class="n">scheme</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="get_orbit_variables"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables">[docs]</a><span class="k">def</span> <span class="nf">get_orbit_variables</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">):</span>
+<div class="viewcode-block" id="get_orbit_variables">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_orbit_variables">[docs]</a>
+<span class="k">def</span> <span class="nf">get_orbit_variables</span><span class="p">(</span><span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the variable names used for orbit setup.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        accel (str): &#39;lhc&#39; or &#39;hllhc&#39;</span>
@@ -274,7 +272,10 @@
     <span class="k">return</span> <span class="n">variables</span><span class="p">,</span> <span class="n">special</span></div>
 
 
-<div class="viewcode-block" id="orbit_setup"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup">[docs]</a><span class="k">def</span> <span class="nf">orbit_setup</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="orbit_setup">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.orbit_setup">[docs]</a>
+<span class="k">def</span> <span class="nf">orbit_setup</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Automated orbit setup for some default schemes.</span>
 <span class="sd">    Please check if these are still valid.</span>
 
@@ -322,7 +323,10 @@
     <span class="k">return</span> <span class="n">full_scheme</span></div>
 
 
-<div class="viewcode-block" id="get_current_orbit_scheme"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme">[docs]</a><span class="k">def</span> <span class="nf">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_current_orbit_scheme">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.get_current_orbit_scheme">[docs]</a>
+<span class="k">def</span> <span class="nf">get_current_orbit_scheme</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the current values for the orbit variales.</span>
 
 <span class="sd">    Args:</span>
@@ -338,7 +342,10 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="o">.</span><span class="n">defs</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">special</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="check_crabbing"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.check_crabbing">[docs]</a><span class="k">def</span> <span class="nf">check_crabbing</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">auto_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="check_crabbing">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.check_crabbing">[docs]</a>
+<span class="k">def</span> <span class="nf">check_crabbing</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">auto_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Check that the crabbing is not larger than the crossing angle.</span>
 
 <span class="sd">    Args:</span>
@@ -360,10 +367,13 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
 
+
 <span class="c1"># Orbit Checks -----------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="log_orbit"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit">[docs]</a><span class="k">def</span> <span class="nf">log_orbit</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span> <span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="log_orbit">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit">[docs]</a>
+<span class="k">def</span> <span class="nf">log_orbit</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span> <span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the orbit from madx-instance and twiss-dataframe and</span>
 <span class="sd">    log the configuration per IP. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">twiss</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -375,7 +385,10 @@
         <span class="n">log_orbit_from_twiss</span><span class="p">(</span><span class="n">twiss</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="log_orbit_from_madx"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx">[docs]</a><span class="k">def</span> <span class="nf">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span>
+
+<div class="viewcode-block" id="log_orbit_from_madx">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_madx">[docs]</a>
+<span class="k">def</span> <span class="nf">log_orbit_from_madx</span><span class="p">(</span><span class="n">madx</span><span class="p">:</span> <span class="n">Madx</span><span class="p">,</span> <span class="n">accel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2018</span><span class="p">,</span>
                         <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">variables</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Log current orbit scheme sorted by IP. &quot;&quot;&quot;</span>
@@ -388,7 +401,10 @@
                 <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="log_orbit_from_twiss"><a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_twiss">[docs]</a><span class="k">def</span> <span class="nf">log_orbit_from_twiss</span><span class="p">(</span><span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="log_orbit_from_twiss">
+<a class="viewcode-back" href="../../modules/index.html#cpymad_lhc.ir_orbit.log_orbit_from_twiss">[docs]</a>
+<span class="k">def</span> <span class="nf">log_orbit_from_twiss</span><span class="p">(</span><span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Log orbit from twiss-dataframe. &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">ip</span> <span class="ow">in</span> <span class="n">_get_ip_iterable</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
         <span class="n">ip_marker</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;IP</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s1">d</span><span class="si">}</span><span class="s1">&#39;</span>
@@ -421,6 +437,7 @@
                 <span class="n">xing</span> <span class="o">=</span> <span class="s1">&#39;-unknown-&#39;</span>
 
             <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IP</span><span class="si">{</span><span class="n">ip</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">: xing </span><span class="si">{</span><span class="n">xing</span><span class="si">}</span><span class="s2">, offset </span><span class="si">{</span><span class="n">offset_txt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_get_angle</span><span class="p">(</span><span class="n">twiss</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">ip_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
