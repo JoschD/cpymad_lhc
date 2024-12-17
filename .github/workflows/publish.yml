@@ -11,20 +11,21 @@ on:  # Runs everytime a release is added to the repository
 
 jobs:
   deploy:
-    name: ${{ matrix.os }} / ${{ matrix.python-version }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:  # only lowest supported Python on ubuntu-latest
-        os: [ubuntu-latest]
-        python-version: [3.12]
+    name: upload release to PyPI
+    runs-on: ubuntu-latest
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    environment: pypi
+    permissions:
+          # IMPORTANT: this permission is mandatory for Trusted Publishing
+          id-token: write
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.12
           cache: 'pip'
           cache-dependency-path: '**/pyproject.toml'
 
@@ -38,10 +39,6 @@ jobs:
           python -m build
           twine check dist/*
 
-      - name: Build and publish
+      - name: Publish package distributions to PyPI
         if: ${{ success() }}
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          twine upload dist/*
+        uses: pypa/gh-action-pypi-publish@release/v1
