@@ -34,4 +34,4 @@
 
 ## 2021-11-19 Version 0.0.1
 
-- This is a very early release. Thinks should work, but I need tests.
+- This is a very early release. Things should work, but I need tests.
