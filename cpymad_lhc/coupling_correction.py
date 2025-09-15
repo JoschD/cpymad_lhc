@@ -6,12 +6,18 @@ Creates a coupling knob from current optics.
 Perform coupling correction.
 The functionality is based on the FineTuneCoupling scripts.
 """
-from typing import Tuple, Sequence, List
-
-from cpymad.madx import Madx
-from cpymad_lhc.general import get_coupling_knobs, get_tune_and_chroma_knobs
+from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
+
+from cpymad_lhc.general import get_coupling_knobs, get_tune_and_chroma_knobs
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from cpymad.madx import Madx
+
 
 LOG = logging.getLogger(__name__)
 
@@ -45,9 +51,9 @@ def correct_coupling(madx: Madx, accel: str, sequence: str,
 
 
 def correct_coupling_with_knobs(madx: Madx, sequence: str,
-                                tune_knobs: List[str],
-                                chroma_knobs: List[str],
-                                coupling_knobs: List[str],
+                                tune_knobs: list[str],
+                                chroma_knobs: list[str],
+                                coupling_knobs: list[str],
                                 qx: float, qy: float, dqx: float, dqy: float,
                                 iterations: int = 2, tolerance: float = 1e-7,
                                 simplex: bool = False,
@@ -127,7 +133,7 @@ def correct_coupling_with_knobs(madx: Madx, sequence: str,
 
 # Algorithm Steps --------------------------------------------------------------
 
-def _get_middle_tunes(qx: float, qy: float) -> Tuple[float, float]:
+def _get_middle_tunes(qx: float, qy: float) -> tuple[float, float]:
     """ Get the tunes with the factional part in the middle
     between the qx and qy fractional parts, but with the same integer part. """
     qx_frac, qy_frac = qx % 1, qy % 1
@@ -141,9 +147,11 @@ def _get_default_knob_names(accel: str, sequence: str, suffix: str = "") -> dict
     """ Get tune, chroma and coupling knobs. """
     tune_chroma_knobs = list(get_tune_and_chroma_knobs(accel, int(sequence[-1]), suffix=suffix))
     coupling_knobs = list(get_coupling_knobs(accel, int(sequence[-1]), suffix=suffix))
-    return dict(tune_knobs=tune_chroma_knobs[:2],
-                chroma_knobs=tune_chroma_knobs[2:],
-                coupling_knobs=coupling_knobs)
+    return dict( # noqa: C408
+        tune_knobs=tune_chroma_knobs[:2],
+        chroma_knobs=tune_chroma_knobs[2:],
+        coupling_knobs=coupling_knobs,
+    )
 
 
 def _analytical_minimization(madx: Madx, sequence: str, knob: str):
@@ -189,7 +197,7 @@ def _empirical_minimization(madx: Madx, sequence: str,
         )
 
 
-def _recover_tunes(madx: Madx, sequence: str, tune_knobs: List[str], chroma_knobs: List[str],
+def _recover_tunes(madx: Madx, sequence: str, tune_knobs: list[str], chroma_knobs: list[str],
                    qx: float, qy: float, dqx: float, dqy: float):
     """ Recover Tunes (i.e. normal tune matching) """
     # match_tune(madx, accel, sequence, qx=qx, qy=qy, dqx=dqx, dqy=dqy)
@@ -272,6 +280,3 @@ def match(madx: Madx, sequence: str, knobs: Sequence[str],
         madx.command.lmdif(calls=calls, tolerance=tolerance)
 
     madx.command.endmatch()
-
-
-# Other Approaches

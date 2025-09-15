@@ -10,11 +10,16 @@ All values are energy independent.
 The python script was adapted from
 errors/corr_limit.madx or errors/corr_value_limit.madx (depending on HL-LHC version)
 """
-import logging
+from __future__ import annotations
 
-from cpymad.madx import Madx
+import logging
+from typing import TYPE_CHECKING
 
 from cpymad_lhc.general import lhc_arc_names
+
+if TYPE_CHECKING:
+    from cpymad.madx import Madx
+
 
 LOG = logging.getLogger(__name__)
 LOG_FORMAT = "{name:<10s}    {val_str:>10s}    {max_str:>10s}    {allowed_str:>10s}"
@@ -22,7 +27,7 @@ LOG_FORMAT = "{name:<10s}    {val_str:>10s}    {max_str:>10s}    {allowed_str:>1
 
 # All values are defined as multiples of 0.3/Energy
 LIMITS = {
-    'HLLHC': dict(
+    'HLLHC': dict(  # noqa
         MQSX1='kmax_MQSXF',
         MQSX2=1.360/0.017,            # 1.36 T @ 17 mm in IR2&IR8
         MCSX1='kmax_MCSXF',
@@ -56,7 +61,7 @@ REL_ALLOWED = 0.3 / 7000  # see corr_limit.madx
 
 
 class LimitChecks:
-    def __init__(self, madx, beam, limit_to_max, values_dict):
+    def __init__(self, madx: Madx, beam: int, limit_to_max: bool, values_dict: dict):
         """ Setup checks 'global' variables. """
         self.mvars = madx.globals
         self.beam = 2 if beam == 4 else beam
@@ -72,7 +77,7 @@ class LimitChecks:
                 LOG_FORMAT.format(name=name,
                                   val_str=f"{self.mvars[name]}: .3e",
                                   max_str="unknown",
-                                  allowed_str=f"unknown",
+                                  allowed_str="unknown",
                                   )
             )
             return

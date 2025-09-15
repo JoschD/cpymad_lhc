@@ -4,17 +4,23 @@ General
 
 Some helper functions for cpymad, that would be complicated macros in MAD-X.
 """
+from __future__ import annotations
+
 import logging
 import shutil
 from contextlib import contextmanager, suppress
 from functools import partial
 from pathlib import Path
-from typing import List, Sequence, Tuple
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 import tfs
-from cpymad.madx import Madx, Table
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from cpymad.madx import Madx, Table
 
 LOG = logging.getLogger(__name__)
 
@@ -76,10 +82,7 @@ def get_tfs(table: Table,
 
     if not index and only_selected:
         index = table.selected_rows()
-        if len(index):
-            index = np.array(index, dtype=bool)
-        else:
-            index = None
+        index = np.array(index, dtype=bool) if len(index) else None
 
     headers = {}
     with suppress(ValueError):
@@ -323,7 +326,7 @@ def switch_magnetic_errors(madx: Madx, **kwargs):
 
 # Knobs ------------------------------------------------------------------------
 
-def get_coupling_knobs(accel: str, beam: int, suffix: str = "") -> Tuple[str, str]:
+def get_coupling_knobs(accel: str, beam: int, suffix: str = "") -> tuple[str, str]:
     """ Get names of knobs to change coupling as tuple of strings.
 
     Args:
@@ -344,7 +347,7 @@ def get_coupling_knobs(accel: str, beam: int, suffix: str = "") -> Tuple[str, st
         raise KeyError(f"Accelerator '{accel}' not recognized.")
 
 
-def get_tune_and_chroma_knobs(accel: str, beam: int, suffix: str = '') -> Tuple[str, str, str, str]:
+def get_tune_and_chroma_knobs(accel: str, beam: int, suffix: str = '') -> tuple[str, str, str, str]:
     """ Get names of knobs to change tune and chromaticity as tuple of strings.
 
     Args:
@@ -366,7 +369,7 @@ def get_tune_and_chroma_knobs(accel: str, beam: int, suffix: str = '') -> Tuple[
         raise KeyError(f"Accelerator '{accel}' not recognized.")
 
 
-def get_kqs_for_coupling_correction(beam: int) -> List[str]:
+def get_kqs_for_coupling_correction(beam: int) -> list[str]:
     """ Returns a list of elements for the respective beam as used for coupling correction.
 
     Args:
@@ -549,12 +552,12 @@ def auto_dtype(df):
         return df.apply(partial(pd.to_numeric, errors='ignore'))
 
 
-def lhc_arcs() -> List[str]:
+def lhc_arcs() -> list[str]:
     """ Strings of all LHC arcs. """
     return [f"{i}{i%8+1}" for i in range(1, 9)]
 
 
-def lhc_arc_names(beam: int) -> List[str]:
+def lhc_arc_names(beam: int) -> list[str]:
     """ Names of all arcs for given beam. """
     return [f'A{arc}B{beam:d}' for arc in lhc_arcs()]
 
@@ -578,8 +581,8 @@ def get_k_strings(start: int = 0, stop: int = 8, orientation: str = 'both'):
 
 
 def add_expression(madx: Madx, name: str, expression: str):
-    """ Add an expression to a variable that might already 
-    be a deferred expression. 
+    """ Add an expression to a variable that might already
+    be a deferred expression.
 
     Args:
         madx (Madx): Madx instance to incorporate the variable in

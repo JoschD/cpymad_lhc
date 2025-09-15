@@ -1,16 +1,18 @@
-""" 
+"""
 Input/Output Tools
 ------------------
 
 Tools to enable easy input and output operations with cpymad.
 """
+from __future__ import annotations
+
 
 class PathContainer:
     """ Class for easy access to stored paths and conversion to strings. """
     @classmethod
-    def get(self, key, *args):
-        return getattr(self, key).joinpath(*args)
-        
+    def get(cls, key, *args):
+        return getattr(cls, key).joinpath(*args)
+
     @classmethod
-    def str(self, key, *args):
-        return str(self.get(key, *args))
+    def str(cls, key, *args):
+        return str(cls.get(key, *args))
