@@ -2,17 +2,17 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/JoschD/cpymad_lhc/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                                |    Stmts |     Miss |  Cover |   Missing |
-|------------------------------------ | -------: | -------: | -----: | --------: |
-| cpymad\_lhc/\_\_init\_\_.py         |        7 |        0 |   100% |           |
-| cpymad\_lhc/corrector\_limits.py    |       72 |       72 |     0% |    13-168 |
-| cpymad\_lhc/coupling\_correction.py |       90 |       90 |     0% |     9-282 |
-| cpymad\_lhc/coupling\_knob.py       |       84 |       84 |     0% |     8-208 |
-| cpymad\_lhc/general.py              |      245 |      245 |     0% |     7-610 |
-| cpymad\_lhc/io.py                   |        8 |        0 |   100% |           |
-| cpymad\_lhc/ir\_orbit.py            |      137 |      137 |     0% |    27-362 |
-| cpymad\_lhc/logging.py              |       98 |       98 |     0% |     7-188 |
-|                           **TOTAL** |  **741** |  **726** | **2%** |           |
+| Name                                |    Stmts |     Miss |   Cover |   Missing |
+|------------------------------------ | -------: | -------: | ------: | --------: |
+| cpymad\_lhc/\_\_init\_\_.py         |        7 |        0 |    100% |           |
+| cpymad\_lhc/corrector\_limits.py    |       72 |       72 |      0% |    13-168 |
+| cpymad\_lhc/coupling\_correction.py |       90 |       90 |      0% |     9-282 |
+| cpymad\_lhc/coupling\_knob.py       |       84 |       84 |      0% |     8-208 |
+| cpymad\_lhc/general.py              |      245 |      154 |     37% |78-122, 138-197, 211-230, 249-297, 412-426, 437-451, 467, 483-501, 514-519, 547-552, 562, 578 |
+| cpymad\_lhc/io.py                   |        8 |        0 |    100% |           |
+| cpymad\_lhc/ir\_orbit.py            |      137 |       69 |     50% |110, 193, 258-264, 275-281, 286-316, 321-332, 337-341, 346-362 |
+| cpymad\_lhc/logging.py              |       98 |        1 |     99% |        60 |
+|                           **TOTAL** |  **741** |  **470** | **37%** |           |
 
 
 ## Setup coverage badge
