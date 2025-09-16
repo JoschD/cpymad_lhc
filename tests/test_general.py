@@ -1,6 +1,10 @@
 from cpymad_lhc import general
 from cpymad.madx import Madx
 
+class MadxMock:
+    def __init__(self):
+        self.globals = {}
+
 
 def test_lhc_sequence_names():
     name, file, bv = general.get_lhc_sequence_filename_and_bv(beam=1)
@@ -20,11 +24,8 @@ def test_lhc_sequence_names():
 
 
 def test_switch_magnetic_errors():
-    class MADXMock:
-        def __init__(self):
-            self.globals = {}
 
-    madx = MADXMock()
+    madx = MadxMock()
 
     general.switch_magnetic_errors(madx, default=True)
     assert madx.globals["ON_A10s"]
@@ -73,3 +74,33 @@ def test_add_expression():
 
     general.add_expression(madx, "B", "A + 2")
     assert madx.globals["B"] == 9
+
+    general.add_expression(madx, "B", "C*2")
+    assert madx.globals["B"] == 19
+
+
+def test_disable_errors():
+    madx = MadxMock()
+
+    a = 1
+    b = 10
+
+    madx.globals["A"] = a
+    madx.globals["B"] = b
+
+    with general.temp_disable_errors(madx, "A", "B"):
+        assert madx.globals["A"] == 0
+        assert madx.globals["B"] == 0
+
+    assert madx.globals["A"] == a
+    assert madx.globals["B"] == b
+
+
+def test_get_k_strings():
+    k = general.get_k_strings()
+    assert "K7L" in k
+    assert "K0SL" in k
+    assert len(k) == 2 * 8  # 8 normal + 8 skew
+
+    k = general.get_k_strings(start=3, stop=5, orientation="skew")
+    assert k == ["K3SL", "K4SL"]
