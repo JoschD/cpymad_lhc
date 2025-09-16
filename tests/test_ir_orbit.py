@@ -1,7 +1,8 @@
 import pytest
-from cpymad_lhc.ir_orbit import orbit_setup, get_current_orbit_scheme, check_crabbing
-from tests.conftest import MadxMock, silence_stdout
 from cpymad.madx import Madx
+
+from cpymad_lhc.ir_orbit import check_crabbing, get_current_orbit_scheme, orbit_setup
+from tests.conftest import MadxMock, silence_stdout
 
 
 def test_orbit_setup():
