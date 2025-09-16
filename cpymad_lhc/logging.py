@@ -4,6 +4,8 @@ Logging
 
 Logging tools with cpymad perks.
 """
+from __future__ import annotations
+
 import logging
 import subprocess
 import sys
@@ -21,7 +23,7 @@ MADXOUT = 'madxout'
 
 # ASCII Colors, change to your liking (the last three three-digits are RGB)
 # Default colors should be readable on dark and light backgrounds
-COLORS = dict(
+COLORS = dict(  # noqa: C408
     reset='\33[0m',
     name='\33[0m\33[38;2;127;127;127m',
     msg='',
@@ -34,7 +36,7 @@ COLORS = dict(
 )
 
 
-class StreamToLogger(object):
+class StreamToLogger:
     """ File-like stream object that redirects writes to a logger instance. """
     def __init__(self, logger, log_level=logging.INFO):
         self.logger = logger
@@ -183,4 +185,4 @@ def cpymad_logging_setup(
         madx_cmd_logger.addHandler(madx_cmd_handler)
     cmd_stream = StreamToLogger(madx_cmd_logger, log_level=LOG_CMD_LVL)
 
-    return dict(stdout=out_stream, command_log=cmd_stream, stderr=subprocess.STDOUT)
+    return dict(stdout=out_stream, command_log=cmd_stream, stderr=subprocess.STDOUT)  # noqa: C408

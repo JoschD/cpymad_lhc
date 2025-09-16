@@ -24,21 +24,28 @@ X Crossing Angles - opposite sign
 X Crossing offsets - opposite sign (i.e. same sides)
 Y Separation - opposite sign (i.e. opposite sides)
 """
-import re
-from typing import Iterable, Union, Dict
+from __future__ import annotations
 
-from cpymad.madx import Madx
-from pandas import DataFrame
-from tfs import TfsDataFrame
 import logging
+import re
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from cpymad_lhc.general import get_tfs
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from cpymad.madx import Madx
+    from pandas import DataFrame
+    from tfs import TfsDataFrame
+
+
 LOG = logging.getLogger(__name__)
 
 
-def crossing_schemes(scheme: str, accel: str, year: int = 2018) -> Dict[str, float]:  # from tracking masks
+def crossing_schemes(scheme: str, accel: str, year: int = 2018) -> dict[str, float]:  # from tracking masks
     if scheme == 'flat':
         return {}
 
@@ -76,9 +83,9 @@ def crossing_schemes(scheme: str, accel: str, year: int = 2018) -> Dict[str, flo
                 'on_x8h':  -200, 'on_sep8v':  -1.0,
                 'on_x8v':     0, 'on_sep8h':   0.0,
             },
-        }[scheme]    
+        }[scheme]
 
-    elif accel == 'hllhc':
+    if accel == 'hllhc':
         return {
             'inj': {
                 'on_x1':  295, 'on_sep1': -2,
@@ -145,7 +152,7 @@ def get_orbit_variables(accel: str, year: int = 2018):
                 'x8v', 'sep8v', 'x8h', 'sep8h', 'o8', 'a8', 'oh8', 'ov8',
                 'alice', 'sol_alice', 'lhcb', 'sol_atlas', 'sol_cms',
             )
-            special = dict()
+            special = {}
     variables = [f'on_{var}' for var in on_variables] + [f'phi_ir{ir:d}' for ir in (1, 2, 5, 8)]
     return variables, special
 
@@ -239,7 +246,13 @@ def check_crabbing(madx: Madx, auto_set: bool = False):
 # Orbit Checks -----------------------------------------------------------------
 
 
-def log_orbit(madx: Madx, accel: str, year: int = 2018, twiss: TfsDataFrame = None, ip: Union[Iterable[int], int] = None):
+def log_orbit(
+    madx: Madx,
+    accel: str,
+    year: int = 2018,
+    twiss: TfsDataFrame | None = None,
+    ip: Iterable[int] | int | None = None
+    ):
     """ Get the orbit from madx-instance and twiss-dataframe and
     log the configuration per IP. """
     if twiss is None:
@@ -247,13 +260,17 @@ def log_orbit(madx: Madx, accel: str, year: int = 2018, twiss: TfsDataFrame = No
 
     variables = get_current_orbit_scheme(madx, accel, year)  # takes a few seconds, so do here
     for ip in _get_ip_iterable(ip):
-        log_orbit_from_madx(madx, accel, ip, variables)
+        log_orbit_from_madx(madx, accel=accel, year=year, ip=ip, variables=variables)
         log_orbit_from_twiss(twiss, ip)
 
 
-def log_orbit_from_madx(madx: Madx, accel: str, year: int = 2018,
-                        ip: Union[Iterable[int], int] = None,
-                        variables: Iterable[str] = None):
+def log_orbit_from_madx(
+    madx: Madx,
+    accel: str,
+    year: int = 2018,
+    ip: Iterable[int] | int | None = None,
+    variables: Iterable[str] | None = None,
+    ):
     """ Log current orbit scheme sorted by IP. """
     if variables is None:
         variables = get_current_orbit_scheme(madx, accel, year)
@@ -264,7 +281,7 @@ def log_orbit_from_madx(madx: Madx, accel: str, year: int = 2018,
                 LOG.info(f"{k} = {v}")
 
 
-def log_orbit_from_twiss(twiss: TfsDataFrame, ip: Union[Iterable[int], int] = None):
+def log_orbit_from_twiss(twiss: TfsDataFrame, ip: Iterable[int] | int | None = None):
     """ Log orbit from twiss-dataframe. """
     for ip in _get_ip_iterable(ip):
         ip_marker = f'IP{ip:d}'
@@ -315,7 +332,7 @@ def _get_angle(twiss: TfsDataFrame, ip_name: str, element: str, plane: str):
     return np.arctan(dz / ds)
 
 
-def _get_ip_iterable(ip: Union[Iterable[int], int]):
+def _get_ip_iterable(ip: Iterable[int] | int | None) -> Iterable[int]:
     """ Returns `ip` as iterable, or tuple of all ips if `ip` is `None`. """
     if ip is None:
         return 1, 2, 5, 8
@@ -343,9 +360,3 @@ def _get_next_element(twiss: DataFrame, ip: int):
         if idx >= 200:
             break
     raise ValueError(f"No suitable element for angle-calculation found in IP{ip}")
-
-
-
-
-
-

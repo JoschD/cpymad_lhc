@@ -15,6 +15,9 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["cpymad_lhc"]
 
+[tool.coverage.run]
+relative_files = true
+
 [project]
 name = "cpymad-lhc"
 readme = "README.md"
@@ -24,7 +27,7 @@ authors = [
 ]
 license = "MIT"
 dynamic = ["version"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 keywords = [
   "cpymad",
@@ -38,10 +41,10 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -77,7 +80,55 @@ documentation = "https://JoschD.github.io/cpymad_lhc/ "
 changelog = "https://github.com/JoschD/cpymad_lhc/blob/master/CHANGELOG.md"
 
 
-[tool.ruff]
+# ----- Dev Tools Configuration ----- #
 
-# Assume Python 3.9+
-target-version = "py39"
+[tool.ruff]
+exclude = [
+  ".eggs",
+  ".git",
+  ".mypy_cache",
+  ".venv",
+  "_build",
+  "build",
+  "dist",
+]
+
+# Assume Python 3.10+
+target-version = "py310"
+
+line-length = 100
+indent-width = 4
+
+[tool.ruff.lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+ignore = [
+  "E501",  # line too long
+  "FBT001",  # boolean-type-hint-positional-argument
+  "FBT002",  # boolean-default-value-positional-argument
+  "PT019",  # pytest-fixture-param-without-value (but suggested solution fails)
+]
+extend-select = [
+    "F",        # Pyflakes rules
+    "W",        # PyCodeStyle warnings
+    "E",        # PyCodeStyle errors
+    "I",        # Sort imports properly
+    "A",        # Detect shadowed builtins
+    "N",        # enforce naming conventions, e.g. ClassName vs function_name
+    "UP",       # Warn if certain things can change due to newer Python versions
+    "C4",       # Catch incorrect use of comprehensions, dict, list, etc
+    "FA",       # Enforce from __future__ import annotations
+    "FBT",      # detect boolean traps
+    "ISC",      # Good use of string concatenation
+    "BLE",      # disallow catch-all exceptions
+    "ICN",      # Use common import conventions
+    "RET",      # Good return practices
+    "SIM",      # Common simplification rules
+    "TID",      # Some good import practices
+    "TC",       # Enforce importing certain types in a TYPE_CHECKING block
+    "PTH",      # Use pathlib instead of os.path
+    # "NPY",      # Some numpy-specific things
+]
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []

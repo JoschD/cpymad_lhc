@@ -1,37 +1,37 @@
 """
 Coupling Knob
-------------------
+-------------
 
 Creates a coupling knob from current optics.
 Not implemented yet. TODO!
 """
-
-from operator import itemgetter
-from pathlib import Path
-from typing import Sequence, Union
-
-# from optics_functions.coupling import coupling_via_cmatrix
-import pandas as pd
-from cpymad.madx import Madx
-from cpymad_lhc.general import lhc_arcs, get_coupling_knobs, get_tfs, add_expression
-import numpy as np
-import tfs
+from __future__ import annotations
 
 import logging
+from operator import itemgetter
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+import numpy as np
+import pandas as pd
+import tfs
+
+from cpymad_lhc.general import add_expression, get_coupling_knobs, get_tfs, lhc_arcs
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from cpymad.madx import Madx
+
 
 LOG = logging.getLogger(__name__)
 
 COL_REFERENCE = "Reference"
 
-def create(madx: Madx, knobs: Sequence[str], dependant_knobs:dict):
-    # get F1001, F1010 from cmatrix
-    # define varying parameters: knob = knob_init + vary
-    #
-    pass
 
 def replace_k0(attribute):
     replacements_map = {"k0l": "angle", "k0sl": "tilt"}
-    if attribute in replacements_map.keys():
+    if attribute in replacements_map:
         new_attribute = replacements_map[attribute]
         LOG.info(f"Attribute {attribute} is being replaced with {new_attribute}")
         attribute = new_attribute
@@ -64,20 +64,19 @@ def get_attribute_response(madx: Madx, sequence: str, variables: Sequence[str], 
         madx.globals[var] = 0
 
     # drop all-zero rows
-    df = df.loc[(df!=0).any(axis=1)]
-    return df
+    return df.loc[(df!=0).any(axis=1)]
 
 
 # Old-School Coupling Knobs -------------------
 SINGLE_KQS_LISTS = {
 # Sectors with commonly powered MQSs
     1: ['23', '45', '67', '81'],
-    2: ['12', '34', '56', '78'], 
+    2: ['12', '34', '56', '78'],
 }
 
 
 def calculate_coupling_coefficients_per_sector(
-        df: tfs.TfsDataFrame, 
+        df: tfs.TfsDataFrame,
         deactivate_sectors: Sequence[str] = ('12', '45', '56', '81')
     ) -> tfs.TfsDataFrame:
     """ Calculate the coupling knob coefficients as in corr_MB_ats_v4.
@@ -85,9 +84,9 @@ def calculate_coupling_coefficients_per_sector(
     with cosine for the real part and sine for the imaginary part.
     What is happening here is, that we are building a matrix for the equation-system
     M * [MQS12,..., MQS81] = -[RE, IM]
-    where RE and IM are the real and imaginary parts of the coupling coefficients, 
+    where RE and IM are the real and imaginary parts of the coupling coefficients,
     and therefore the knobs we want to create.
-    MQS12 - MQS81 is the total powering of the MQS per arc, which we steer with 
+    MQS12 - MQS81 is the total powering of the MQS per arc, which we steer with
     the knob. All MQS in a single arc are assumed to be powered equally.
     After building the matrix, we "solve" the equation system via pseudo-inverese M+
     and get therefore the definition of the coupling knob.
@@ -95,24 +94,27 @@ def calculate_coupling_coefficients_per_sector(
     HINT: The MINN function in corr_MB_ats_v4 is simply the calculation the pseudo-inverse:
     M+  = M' (M * M')^-1  (' = transpose, ^-1 = inverse)
     including the minus on the rhs of the equation.
+
     TODO:
-        - Get beta and phases from the beamline directly (instead of the TFS dataframe)
-        - Make the number of MQS more flexible, could maybe be parsed from the beamline
-        - Why is there an absolute value in Eq. (59) but not in the code? (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)
-        - Add a2 correction to the KQS definition (as in corr_MB_ats_v4)
-        - Include the actual fractional tune split of the current machine (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)
-        - Calculate also the contribution to f_1010 and try to set to zero
-        - Does this still work when slicing the MQS?
+      - Get beta and phases from the beamline directly (instead of the TFS dataframe)
+      - Make the number of MQS more flexible, could maybe be parsed from the beamline
+      - Why is there an absolute value in Eq. (59) but not in the code? (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)
+      - Add a2 correction to the KQS definition (as in corr_MB_ats_v4)
+      - Include the actual fractional tune split of the current machine (see also https://cds.cern.ch/record/2778887/files/CERN-ACC-NOTE-2021-0022.pdf)
+      - Calculate also the contribution to f_1010 and try to set to zero
+      - Does this still work when slicing the MQS?
+
     Args:
-        df (tfs.TfsDataFrame): 
-            Dataframe containing the optics of the machine. 
-        deactivate_sectors (Sequence[str], optional): 
-            Deactivate these sectors, i.e. don't use their MQS. 
+        df (tfs.TfsDataFrame):
+            Dataframe containing the optics of the machine.
+        deactivate_sectors (Sequence[str], optional):
+            Deactivate these sectors, i.e. don't use their MQS.
             Defaults to ('12', '45', '56', '81'), the ATS sectors.
+
     """
-    BETX, BETY, MUX, MUY = "BETX", "BETY", "MUX", "MUY"
-    MQS_PER_SECTOR = 4  # TODO: get from line (?)
-    LENGTH_MQS = 0.32  # TODO: get from l.mqs
+    BETX, BETY, MUX, MUY = "BETX", "BETY", "MUX", "MUY"  # noqa: N806
+    MQS_PER_SECTOR = 4  # TODO: get from line (?)  # noqa: N806
+    LENGTH_MQS = 0.32  # TODO: get from l.mqs  # noqa: N806
 
     sectors = lhc_arcs()
 
@@ -128,7 +130,7 @@ def calculate_coupling_coefficients_per_sector(
         phase = 2*np.pi * (df_mqs[MUX] - df_mqs[MUY])
 
         for idx, fun in enumerate((np.cos, np.sin)):
-            m[idx, idx_sector] =  (coeff * fun(phase)).sum() 
+            m[idx, idx_sector] =  (coeff * fun(phase)).sum()
 
     m = m * LENGTH_MQS  / (2 * np.pi)  # kqs knobs are multiplied by the length of the MQS
 
@@ -138,28 +140,28 @@ def calculate_coupling_coefficients_per_sector(
 
     result = tfs.TfsDataFrame(
         data=-np.linalg.pinv(m),
-        index=sectors, 
+        index=sectors,
         columns=["re", "im"]
     )
 
     # remove numerical noise:
-    result = result.where(result.abs() > 1e-15, 0)
-
-    return result
+    return result.where(result.abs() > 1e-15, 0)
 
 
-def create_coupling_knobs(madx: Madx, beam: int, accel: str, optics: Union[Path, tfs.TfsDataFrame] = None):
+def create_coupling_knobs(madx: Madx, beam: int, accel: str, optics: Path | tfs.TfsDataFrame | None = None):
     """ Create coupling knobs in the beam-line.
-    WARNING: This function will not take a2 errors into account! 
-    Normally, the a2 errors are also corrected with the MQS, but in this function 
-    the MQS powering is fully controlled by the coupling knobs. 
+    WARNING: This function will not take a2 errors into account!
+    Normally, the a2 errors are also corrected with the MQS, but in this function
+    the MQS powering is fully controlled by the coupling knobs.
     See also the todo's in :func:`xmask.lhc.knob_manipulations.calculate_coupling_coefficients_per_sector`
+
     Args:
         madx (Madx): Madx instance to incorporate the knobs in
         beam (int): Beam number.
-        optics (Path, tfs.TfsDataFrame, optional): 
-            Path or TfsDataFrame of the twiss containing the optics to be used. 
+        optics (Path, tfs.TfsDataFrame, optional):
+            Path or TfsDataFrame of the twiss containing the optics to be used.
             If not given, a twiss will be computed. Defaults to None.
+
     """
     LOG.info(f"Creating Coupling Knobs for beam {beam} ---")
     mvars = madx.globals
