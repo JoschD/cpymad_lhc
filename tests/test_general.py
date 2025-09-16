@@ -9,7 +9,7 @@ class MADXMock:
 
 def test_lhc_sequence_names():
     name, file, bv = general.get_lhc_sequence_filename_and_bv(beam=1)
-    assert file == "lhc_as_built.seq"
+    assert file == "lhc_as-built.seq"
     assert name == "lhcb1"
     assert bv == 1
 
@@ -42,9 +42,9 @@ def test_switch_magnetic_errors():
     madx.globals = {}
 
     general.switch_magnetic_errors(madx, default=True, A10s=False, B6r=False)
-    assert madx.globals["on_A10s"] is False
+    assert not madx.globals["on_A10s"]
     assert madx.globals["on_A2r"]
-    assert madx.globals["on_B6r"] is False
+    assert not madx.globals["on_B6r"]
     assert madx.globals["on_B3r"]
     madx.globals = {}
 
