@@ -9,6 +9,9 @@ on:  # Runs on all push events to master branch and any push related to a pull r
 
 env:
   UV_COMPILE_BYTECODE: 1
+  ALLOWED_COVERAGE_DECREASE: 5  # in percent
+  MIN_COVERAGE: 80  # in percent
+  MIN_DIFF_COVERAGE: 50  # in percent
 
 defaults:
   run:
@@ -51,6 +54,15 @@ jobs:
           name: python-coverage-comment-action
           path: python-coverage-comment-action.txt
 
+      - name: Coverage decrease caclulation
+        id: coverage_decrease
+        env:
+           REF_PCT: ${{ steps.coverage_comment.outputs.reference_percent_covered }}
+        # run: echo ::set-env name=MIN_ALLOWED_COVERAGE::$((${REF_PCT} - ${ALLOWED_COVERAGE_DECREASE}))
+        run: echo "min_allowed=$((${REF_PCT} - ${ALLOWED_COVERAGE_DECREASE}))" >> "$GITHUB_OUTPUT"
+
       - name: Enforce coverage
-        if: ${{ fromJSON(steps.coverage_comment.outputs.new_percent_covered) < (0.9 * fromJSON(steps.coverage_comment.outputs.reference_percent_covered)) }}
-        run: echo "Coverage decreased more than allowed." && exit 1
+        env:
+           MIN_ALLOWED: ${{ steps.coverage_decrease.outputs.min_allowed }}
+           CURRENT_PCT: ${{ steps.coverage_comment.outputs.new_percent_covered }}
+        run: echo "Coverage decreased more than allowed (${CURRENT_PCT} < ${MIN_ALLOWED})." && exit 1
