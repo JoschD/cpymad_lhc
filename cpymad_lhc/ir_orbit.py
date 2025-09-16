@@ -238,7 +238,7 @@ def check_crabbing(madx: Madx, auto_set: bool = False):
             if auto_set:
                 LOG.warning(text)
                 LOG.warning(f"Limiting {on_crab}!")
-                madx.globals[on_crab] = np.sign(crab) * xing
+                madx.globals[on_crab] = np.sign(crab) * abs(xing)
             else:
                 raise ValueError(text)
 
