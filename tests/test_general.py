@@ -104,3 +104,29 @@ def test_get_k_strings():
 
     k = general.get_k_strings(start=3, stop=5, orientation="skew")
     assert k == ["K3SL", "K4SL"]
+
+
+def test_get_kqs():
+    kqs_b1 = general.get_kqs_for_coupling_correction(beam=1)
+    kqs_b2 = general.get_kqs_for_coupling_correction(beam=2)
+
+    assert kqs_b1 != kqs_b2
+    assert len(kqs_b1) == 12
+    assert len(kqs_b2) == 12
+
+    kqs_all = kqs_b1 + kqs_b2
+    assert len(kqs_all) == len(set(kqs_all))  # all different
+
+    for kqs in kqs_all:
+        assert kqs.startswith("KQS.")
+        assert kqs[-2] == "B"
+        assert kqs[-1] in ("1", "2")
+
+    kqs_nobeam = [kq[:-2] for kq in kqs_all]
+
+    for arc in ("12", "23", "34", "45", "56", "67", "78", "81"):
+        assert f"KQS.A{arc}" in kqs_nobeam
+
+    for side in ("L", "R"):
+        for ip in range(1, 9):
+            assert f"KQS.{side}{ip}" in kqs_nobeam
