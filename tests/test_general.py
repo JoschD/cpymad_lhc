@@ -1,9 +1,14 @@
+from functools import partial
+import os
+from pathlib import Path
+import pytest
 from cpymad_lhc import general
 from cpymad.madx import Madx
 
-class MadxMock:
-    def __init__(self):
-        self.globals = {}
+from tests.conftest import MadxMock
+
+
+EPS = 1e-12
 
 
 def test_lhc_sequence_names():
@@ -124,9 +129,68 @@ def test_get_kqs():
 
     kqs_nobeam = [kq[:-2] for kq in kqs_all]
 
-    for arc in ("12", "23", "34", "45", "56", "67", "78", "81"):
+    lhc_arcs = general.lhc_arcs()
+    assert len(lhc_arcs) == 8
+
+    for arc in lhc_arcs:
         assert f"KQS.A{arc}" in kqs_nobeam
 
     for side in ("L", "R"):
         for ip in range(1, 9):
             assert f"KQS.{side}{ip}" in kqs_nobeam
+
+
+def test_get_knobs():
+    coupling = general.get_coupling_knobs(accel="hllhc", beam=1, suffix="test")
+    assert coupling == ("cmrskew", "cmiskew")
+
+    for beam in (2, 4):
+        coupling = general.get_coupling_knobs(accel="lhc", beam=beam, suffix="_test")
+        for knob in coupling:
+            assert knob.endswith("_test")
+            assert "b2" in knob
+            assert knob.startswith("cmis.") or knob.startswith("cmrs.")
+
+    with pytest.raises(KeyError):
+        general.get_coupling_knobs(accel="unknown", beam=1)
+
+
+    tune_chroma = general.get_tune_and_chroma_knobs(accel="lhc", beam=1, suffix="test")
+    assert len(tune_chroma) == 4
+    for knob in tune_chroma:
+        assert knob.endswith("test")
+        assert "b1" in knob
+        assert knob.startswith("dQ")
+
+    tune_chroma = general.get_tune_and_chroma_knobs(accel="hllhc", beam=4, suffix="")
+    assert len(tune_chroma) == 4
+    for knob in tune_chroma:
+        assert knob.endswith("b2")
+        assert knob.startswith("kqt") or knob.startswith("ks")
+
+    with pytest.raises(KeyError):
+        general.get_tune_and_chroma_knobs(accel="unknown", beam=1)
+
+
+def test_fractional_tune():
+    assert general.fractional_tune(0.1) == 0.1
+    assert abs(general.fractional_tune(62.54) - 0.54) < EPS
+
+
+def test_move_sixtrack_output(tmp_path):
+    outputdir = tmp_path / "output"
+    outputdir.mkdir()
+
+    madx = MadxMock()
+
+    # Call function
+    os.chdir(tmp_path)
+    general.sixtrack_output(madx, energy=5050, outputdir=outputdir)
+
+    assert madx.globals["VRF400"] == 16
+    assert "LAGRF400.B1" in madx.globals
+    assert "LAGRF400.B2" in madx.globals
+
+    for i in range(3):
+        assert (outputdir / f"fc{i}.out").exists()
+        assert not (tmp_path / f"fc{i}.out").exists()
