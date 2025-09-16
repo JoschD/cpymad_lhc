@@ -380,7 +380,7 @@ def get_kqs_for_coupling_correction(beam: int) -> list[str]:
     """
     beam = 2 if beam == 4 else beam
     names = {
-        1: ['R1', "L2", "A23", "R3", "L4", "A45", "R5", "L6", "A67", "R7", "L8", "A81"],
+        1: ["R1", "L2", "A23", "R3", "L4", "A45", "R5", "L6", "A67", "R7", "L8", "A81"],
         2: ["A12", "R2", "L3", "A34", "R4", "L5", "A56", "R6", "L7", "A78", "R8", "L1"],
     }
     return [f"KQS.{name:s}B{beam:d}" for name in names[beam]]
@@ -443,7 +443,7 @@ def closest_tune_approach(madx: Madx, accel: str, sequence: str,
 
     madx.command.match(chrom=True)
     madx.command.global_(sequence=sequence, q1=qxmid, q2=qymid, dq1=dqx, dq2=dqy)
-    for name in saved_values.keys():
+    for name in saved_values:
         madx.command.vary(name=name, step=step)
     madx.command.lmdif(calls=calls, tolerance=tolerance)
     madx.command.endmatch()
@@ -484,7 +484,7 @@ def power_landau_octupoles(madx: Madx, mo_current: float, beam: int, defective_a
     try:
         brho = mvars.nrj*1e9/mvars.clight  # Bending Radius, clight is madx constant
     except AttributeError:
-        raise EnvironmentError(
+        raise OSError(
             "The global MADX variable 'NRJ' is not defined."
             " It should have been set in the optics files."
             " Otherwise create manually."
@@ -533,7 +533,7 @@ def sixtrack_output(madx, energy, outputdir: Path = None):
     if outputdir is not None:
         # manually move sixtrack output files
         # (no easy way to specify output dir for them)
-        for f in Path(".").glob("fc*"):
+        for f in Path().glob("fc*"):
             shutil.move(f, outputdir / f.name)
 
 

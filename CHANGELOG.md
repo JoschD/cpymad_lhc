@@ -4,6 +4,7 @@
 
 - Fixed:
   - Bug in `log_orbit` as year was not correctly passed.
+  - Big in `check_crabbing`, which could result in the wrong sign when limiting the crabbing angle.
 
 - Changed:
   - Linting and formatting.
