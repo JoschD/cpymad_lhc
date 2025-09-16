@@ -42,6 +42,7 @@ jobs:
         run: python -m pytest --cov=cpymad_lhc
 
       - name: Coverage comment
+        id: coverage_comment
         uses: py-cov-action/python-coverage-comment-action@v3
         with:
           GITHUB_TOKEN: ${{ github.token }}
@@ -66,3 +67,5 @@ jobs:
            MIN_ALLOWED: ${{ steps.coverage_decrease.outputs.min_allowed }}
            CURRENT_PCT: ${{ steps.coverage_comment.outputs.new_percent_covered }}
         run: echo "Coverage decreased more than allowed (${CURRENT_PCT} < ${MIN_ALLOWED})." && exit 1
+
+    # if: ${{ fromJSON(steps.coverage_comment.outputs.new_percent_covered) < (steps.coverage_decrease.outputs.min_allowed) }}
