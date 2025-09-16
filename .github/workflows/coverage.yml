@@ -59,23 +59,25 @@ jobs:
         id: coverage_decrease
         env:
            REF_PCT: ${{ steps.coverage_comment.outputs.reference_percent_covered }}
-        run: echo "min_allowed=$((${REF_PCT} - (${ALLOWED_COVERAGE_DECREASE})))" >> "$GITHUB_OUTPUT"
+        run: |
+              MIN_ALLOWED=$(echo "${REF_PCT} - ${ALLOWED_COVERAGE_DECREASE}" | bc)
+              echo "min_allowed=${MIN_ALLOWED}" >> $GITHUB_OUTPUT
 
       - name: Check Coverage Decrease
         if: ${{ steps.coverage_comment.outputs.new_percent_covered < steps.coverage_decrease.outputs.min_allowed }}
         env:
            MIN_ALLOWED: ${{ steps.coverage_decrease.outputs.min_allowed }}
            CURRENT_PCT: ${{ steps.coverage_comment.outputs.new_percent_covered }}
-        run: echo "Coverage decreased more than allowed ($((${CURRENT_PCT}*100))% < $((${MIN_ALLOWED} * 100))%)." && exit 1
+        run: echo "Coverage decreased more than allowed (${CURRENT_PCT} < ${MIN_ALLOWED})." && exit 1
 
       - name: Minumum Coverage Check
         if: ${{ steps.coverage_comment.outputs.new_percent_covered < env.MIN_COVERAGE }}
         env:
            CURRENT_PCT: ${{ steps.coverage_comment.outputs.new_percent_covered }}
-        run: echo "Coverage is below minimum ($((${CURRENT_PCT}*100))% < $((${MIN_COVERAGE}*100))%)." && exit 1
+        run: echo "Coverage is below minimum (${CURRENT_PCT} < ${MIN_COVERAGE})." && exit 1
 
       - name: Minimum Diff Coverage Check
         if: ${{ steps.coverage_comment.outputs.diff_percent_covered < env.MIN_DIFF_COVERAGE }}
         env:
             DIFF_PCT: ${{ steps.coverage_comment.outputs.diff_percent_covered }}
-        run: echo "Diff coverage is below minimum ($((${DIFF_PCT}*100))% < $((${MIN_DIFF_COVERAGE}*100))%)." && exit 1
+        run: echo "Diff coverage is below minimum (${DIFF_PCT} < ${MIN_DIFF_COVERAGE})." && exit 1
