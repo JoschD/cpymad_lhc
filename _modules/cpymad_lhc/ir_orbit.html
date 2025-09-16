@@ -332,7 +332,7 @@
             <span class="k">if</span> <span class="n">auto_set</span><span class="p">:</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Limiting </span><span class="si">{</span><span class="n">on_crab</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
-                <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">on_crab</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">crab</span><span class="p">)</span> <span class="o">*</span> <span class="n">xing</span>
+                <span class="n">madx</span><span class="o">.</span><span class="n">globals</span><span class="p">[</span><span class="n">on_crab</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">crab</span><span class="p">)</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">xing</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
