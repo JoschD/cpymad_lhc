@@ -15,6 +15,9 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["cpymad_lhc"]
 
+[tool.coverage.run]
+relative_files = true
+
 [project]
 name = "cpymad-lhc"
 readme = "README.md"
