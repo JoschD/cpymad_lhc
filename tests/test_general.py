@@ -1,10 +1,5 @@
 from cpymad_lhc import general
-
-
-class MADXMock:
-    def __init__(self):
-        self.globals = {}
-        self.sequence = {}
+from cpymad.madx import Madx
 
 
 def test_lhc_sequence_names():
@@ -25,6 +20,10 @@ def test_lhc_sequence_names():
 
 
 def test_switch_magnetic_errors():
+    class MADXMock:
+        def __init__(self):
+            self.globals = {}
+
     madx = MADXMock()
 
     general.switch_magnetic_errors(madx, default=True)
@@ -58,3 +57,19 @@ def test_switch_magnetic_errors():
     assert not madx.globals["ON_A1r"]
     assert not madx.globals["ON_B4r"]
     madx.globals = {}
+
+
+def test_add_expression():
+    madx = Madx()
+
+    madx.globals["A"] = "C"
+    assert madx.globals["A"] == 0
+
+    madx.globals["C"] = 5
+    assert madx.globals["A"] == 5
+
+    general.add_expression(madx, "A", "2")
+    assert madx.globals["A"] == 7
+
+    general.add_expression(madx, "B", "A + 2")
+    assert madx.globals["B"] == 9

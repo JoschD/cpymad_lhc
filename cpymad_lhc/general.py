@@ -380,7 +380,7 @@ def get_kqs_for_coupling_correction(beam: int) -> list[str]:
     """
     beam = 2 if beam == 4 else beam
     names = {
-        1: ['R1', "L2", "A23", "R3", "L4", "A45", "R5", "L6", "A67", "R7", "L8", "A81"],
+        1: ["R1", "L2", "A23", "R3", "L4", "A45", "R5", "L6", "A67", "R7", "L8", "A81"],
         2: ["A12", "R2", "L3", "A34", "R4", "L5", "A56", "R6", "L7", "A78", "R8", "L1"],
     }
     return [f"KQS.{name:s}B{beam:d}" for name in names[beam]]

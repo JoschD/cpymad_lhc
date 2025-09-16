@@ -15,9 +15,6 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["cpymad_lhc"]
 
-[tool.coverage.run]
-relative_files = true
-
 [project]
 name = "cpymad-lhc"
 readme = "README.md"
@@ -79,6 +76,22 @@ repository = "https://github.com/JoschD/cpymad_lhc"
 documentation = "https://JoschD.github.io/cpymad_lhc/ "
 changelog = "https://github.com/JoschD/cpymad_lhc/blob/master/CHANGELOG.md"
 
+# ----- Testing ----- #
+
+[tool.pytest.ini_options]
+markers = [
+    "basic: basic tests run for every commit",
+]
+addopts = [
+    "--import-mode=importlib",
+]
+# Helpful for pytest-debugging (leave commented out on commit):
+# log_cli = true
+# log_cli_level = "DEBUG"
+# log_format = "%(levelname)7s | %(message)s | %(name)s"
+
+[tool.coverage.run]
+relative_files = true
 
 # ----- Dev Tools Configuration ----- #
 
