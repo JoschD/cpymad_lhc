@@ -28,33 +28,33 @@ def test_switch_magnetic_errors():
     madx = MADXMock()
 
     general.switch_magnetic_errors(madx, default=True)
-    assert madx.globals["on_A10s"]
-    assert madx.globals["on_A2r"]
-    assert madx.globals["on_B6s"]
-    assert madx.globals["on_B3r"]
+    assert madx.globals["ON_A10s"]
+    assert madx.globals["ON_A2r"]
+    assert madx.globals["ON_B6s"]
+    assert madx.globals["ON_B3r"]
     madx.globals = {}
 
     general.switch_magnetic_errors(madx, default=False)
-    assert not madx.globals["on_A9s"]
-    assert not madx.globals["on_A1r"]
-    assert not madx.globals["on_B15s"]
-    assert not madx.globals["on_B4r"]
+    assert not madx.globals["ON_A9s"]
+    assert not madx.globals["ON_A1r"]
+    assert not madx.globals["ON_B15s"]
+    assert not madx.globals["ON_B4r"]
     madx.globals = {}
 
     general.switch_magnetic_errors(madx, default=True, A10s=False, B6r=False)
-    assert not madx.globals["on_A10s"]
-    assert madx.globals["on_A2r"]
-    assert not madx.globals["on_B6r"]
-    assert madx.globals["on_B3r"]
+    assert not madx.globals["ON_A10s"]
+    assert madx.globals["ON_A2r"]
+    assert not madx.globals["ON_B6r"]
+    assert madx.globals["ON_B3r"]
     madx.globals = {}
 
     general.switch_magnetic_errors(madx, default=False, AB9=True, B15=True)
-    assert madx.globals["on_A9s"]
-    assert madx.globals["on_A9r"]
-    assert madx.globals["on_B9s"]
-    assert madx.globals["on_B9r"]
-    assert madx.globals["on_B15s"]
-    assert madx.globals["on_B15r"]
-    assert not madx.globals["on_A1r"]
-    assert not madx.globals["on_B4r"]
+    assert madx.globals["ON_A9s"]
+    assert madx.globals["ON_A9r"]
+    assert madx.globals["ON_B9s"]
+    assert madx.globals["ON_B9r"]
+    assert madx.globals["ON_B15s"]
+    assert madx.globals["ON_B15r"]
+    assert not madx.globals["ON_A1r"]
+    assert not madx.globals["ON_B4r"]
     madx.globals = {}
