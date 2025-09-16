@@ -29,6 +29,13 @@ def test_orbit_setup():
     assert "on_x5" not in madx.globals
     assert madx.globals["on_x1_v"] == 122
 
+    # ----- Test not flat with on_x1
+    madx.globals = {}
+    orbit_setup(madx, "lhc", 2018, scheme="inj", on_x1=122)
+    assert "on_x5_h" not in madx.globals
+    assert "on_x5" in madx.globals
+    assert madx.globals["on_x1"] == 122
+
     # ----- Test top with wrong key
     madx.globals = {}
     orbit_setup(madx, "lhc", 2022, scheme="top", on_x1=1000)
@@ -37,7 +44,7 @@ def test_orbit_setup():
 
     # ----- Test hllhc top with right key
     madx.globals = {}
-    orbit_setup(madx, "hllhc", 2022, scheme="top", on_x1=1000, on_alice=1)
+    orbit_setup(madx, "hllhc", 2022, scheme="inj", on_x1=1000, on_alice=1)
     assert "on_x1_v" not in madx.globals
     assert "on_x1" in madx.globals
     assert madx.globals["on_x1"] == 1000
