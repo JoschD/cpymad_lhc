@@ -1,10 +1,6 @@
 # Runs all tests and creates a coverage report
 name: Coverage
 
-defaults:
-  run:
-    shell: bash
-
 on:  # Runs on all push events to master branch and any push related to a pull request
   push:
     branches:
