@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from cpymad_lhc.io import PathContainer
 
 THIS_DIR  = Path(__file__)
